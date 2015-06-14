@@ -1,14 +1,7 @@
+(ns nitrox.analyser.source)
 
-(defn gather-source-file
-  "collects the source code for a particular file
- 
-   (gather-source-file \"src/leiningen/midje_doc/common/gather.clj\")
-   => (just-in {'leiningen.midje-doc.common.gather
-                    {'gather-source-file {:source string?}
-                     'gather-fact-body   {:source string?}
-                     'gather-fact        {:source string?}
-                     'gather-test-file   {:source string?}
-                     'gather             {:source string?}}})"
+(defn analyse-source-file
+  "collects the source code for a particular file"
   {:added "0.2"}
   [file]
   (let [zloc (source/of-file file)

@@ -1,7 +1,8 @@
 (ns nitrox.analyser.test.midje
   (:require [jai.query :as query]
             [rewrite-clj.zip :as source]
-            [rewrite-clj.node :as node]))
+            [rewrite-clj.node :as node]
+            [nitrox.analyser.test.common :as common]))
 
 (defn gather-fact-body
   "collects the required elements from the fact body"
@@ -38,11 +39,11 @@
                :var  (symbol (name sym))
                :docs (gather-fact-body zloc))))))
 
-(defn gather-midje-file
+(defmethod common/analyse-test-file :midje
   "collects test and metadata information from a midje test file"
   {:added "0.2"}
-  ([file] (gather-midje-file file {}))
-  ([file output]
+  ([type file] (gather-midje-file file {}))
+  ([type file output]
    (let [zloc (source/of-file file)
          nsp  (-> (query/$ zloc [(ns | _ & _)] {:walk :top})
                   first)
