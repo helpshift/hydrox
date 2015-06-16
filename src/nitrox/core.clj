@@ -1,8 +1,10 @@
 (ns nitrox.core
-  (:require [leiningen.core.project :as project]))
+  (:require [leiningen.core.project :as project]
+            [hara.common.watch :as watch]
+            [hara.io.watch]))
 
-(defn dive
+(defn initialise
   ([]
-   (dive (project/read "project.clj")))
+   (init (project/read "project.clj")))
   ([{:keys [root src-paths test-paths] :as project}]
    (let [])))
