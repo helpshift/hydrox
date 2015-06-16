@@ -1,4 +1,6 @@
-(ns nitrox.analyser.source)
+(ns nitrox.analyser.source
+  (:require [rewrite-clj.zip :as source]
+            [jai.query :as query]))
 
 (defn analyse-source-file
   "collects the source code for a particular file"

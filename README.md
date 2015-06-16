@@ -22,7 +22,7 @@
 
   API
 
-  (./dive)
+  (./nitrox)
   - updates git logs
   - updates git 
 
