@@ -4,19 +4,19 @@
             [rewrite-clj.node :as node]
             [clojure.walk :as walk]
             [hara.data.nested :as nested]
-            [nitrox.analyser.test.common :as common]
-            [nitrox.analyser.test.clojure]
-            [nitrox.analyser.test.midje]))
+            [nitrox.analyser.common :as common]
+            [nitrox.analyser.test
+             [common :as test] clojure midje]))
 
 (defn find-frameworks [ns-form]
   (let [store (atom #{})]
     (walk/postwalk (fn [form]
-                     (if-let [k (common/frameworks form)]
+                     (if-let [k (test/frameworks form)]
                        (swap! store conj k)))
                    ns-form)
     @store))
 
-(defn analyse-test-file [file]
+(defmethod common/analyse-file :test [_ file]
   (let [zloc   (source/of-file file)
         nsloc  (query/$ zloc [(ns | _ & _)] {:walk :top
                                              :return :zipper
@@ -26,7 +26,7 @@
         frameworks (find-frameworks ns-form)]
     (->> frameworks
          (map (fn [framework]
-                (common/analyse-test framework zloc)))
+                (test/analyse-test framework zloc)))
          (apply nested/merge-nested))))
 
 (comment

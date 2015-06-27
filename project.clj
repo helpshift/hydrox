@@ -12,8 +12,8 @@
                  [hiccup "1.0.5"]
                  [markdown-clj "0.9.66"]
                  [stencil "0.3.5"]
+                 [leiningen "2.5.1"]
                  [me.raynes/conch "0.8.0"]]
-  :profiles {:dev {:dependencies [[midje "1.6.3"]
-                                  [leiningen "2.5.1"]]
+  :profiles {:dev {:dependencies [[midje "1.6.3"]]
                    :plugins [[lein-midje "3.1.3"]
                              [lein-ancient "0.6.7"]]}})
