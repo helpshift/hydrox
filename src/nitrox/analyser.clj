@@ -5,7 +5,7 @@
             [nitrox.common.data :as data]
             [clojure.java.io :as io]
             [hara.data.diff :as diff]))
-
+            
 (def access-paths
   [[[:source-paths]         :source]
    [[:documentation :paths] :doc]
