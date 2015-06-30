@@ -4,7 +4,7 @@
             [rewrite-clj.node :as node]
             [nitrox.analyser.doc.checks :as checks]))
 
-(def SPACING 2)
+(def ^:dynamic *spacing* 2)
 (def ^:dynamic *indentation* 0)
 (def ^:dynamic *namespace* nil)
 
@@ -23,7 +23,7 @@
 
 (defn parse-fact-form [zloc]
   {:type :block
-   :indentation (+ *indentation* SPACING)
+   :indentation (+ *indentation* *spacing*)
    :code (code-form zloc "fact")})
 
 (defn parse-facts-form [zloc]
@@ -31,7 +31,7 @@
 
 (defn parse-comment-form [zloc]
   {:type :block
-   :indentation (+ *indentation* SPACING)
+   :indentation (+ *indentation* *spacing*)
    :code (code-form zloc "comment")})
 
 (defn parse-paragraph [zloc]
@@ -106,6 +106,7 @@
 (defn parse-loop
   ([zloc opts] (parse-loop zloc opts nil []))
   ([zloc opts current output]
+   ;;(println zloc (source/node zloc))
    (cond (nil? zloc)
          (merge-current output current)
 
@@ -129,18 +130,18 @@
                    :ns-form    (binding [*namespace* (:ns element)]
                                  (parse-loop (source/right* zloc) opts element (merge-current output current)))
                    :attribute  (recur (source/right* zloc) opts element (merge-current output current))
-                   :file       (recur (source/right* zloc) opts nil (apply conj output (parse-file opts (:src element))))
+                   :file       (recur (source/right* zloc) opts nil (apply conj output (parse-file (:src element) opts)))
                    :facts      (recur (source/right* zloc) opts nil
-                                      (let [sub (binding [*indentation* (+ *indentation* SPACING)]
+                                      (let [sub (binding [*indentation* (+ *indentation* *spacing*)]
                                                   (parse-loop (-> zloc source/down source/right) opts))]
                                         (apply conj (merge-current output current) sub)))
                    (recur (source/right* zloc) opts element (merge-current output current))))))))
 
-(defn parse-file [opts file]
+(defn parse-file [file opts]
 
   ;; For developement purposes
-  (parse-loop (source/of-file (str (:root opts) "/" file))))
+  (parse-loop (source/of-file (str (:root opts) "/" file)) opts))
 
 
 (comment
-  (parse-file "test/documentation/example_test.clj"))
+  (parse-file "test/documentation/example_test.clj" {:root "/Users/chris/Development/chit/nitrox"}))

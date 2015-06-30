@@ -33,10 +33,10 @@
 
 ;; {<ns> {<var> {:source <> :docs <> :meta <>}}}
 
-(defrecord Reference []
+(defrecord References []
   Object
   (toString [obj]
-    (str "#reference"
+    (str "#references"
          (reduce-kv (fn [nsm nsk vars]
                       (assoc nsm nsk
                              (reduce-kv (fn [vm vk vs]
@@ -46,10 +46,10 @@
                     {}
                     obj))))
 
-(defmethod print-method Reference
+(defmethod print-method References
   [v w]
   (.write w (str v)))
 
-(defn reference
-  ([]  (Reference.))
-  ([m] (map->Reference m)))
+(defn references
+  ([]  (References.))
+  ([m] (map->References m)))

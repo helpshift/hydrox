@@ -1,46 +1,32 @@
 (ns nitrox.regulator
-  (:require [leiningen.core.project :as project]
+  (:require ;;[leiningen.core.project :as project]
             [nitrox.code.util :as util]
             [nitrox.analyser :as analyser]
             [nitrox.common.data :as data]
             [hara.common.watch :as watch]
+            [hara.event :as event]
+            [hara.component :as component]
             [hara.io.watch]
             [hara.data.diff :as diff]
             [clojure.java.io :as io]))
 
-(def access-paths
-  [[[:source-paths]         :source]
-   [[:documentation :paths] :doc]
-   [[:test-paths]           :test]])
+(defn create-folio [{:keys [root] :as project}]
+  (data/folio {:meta        {}
+               :articles    {}
+               :namespaces  {}
+               :project     project
+               :references  (data/references)
+               :registry    (data/registry)
+               :root        root}))
 
-(defn canonical [path]
-  (.getCanonicalPath (io/as-file path)))
-
-(defn file-type [project file]
-  (let [path (.getCanonicalPath file)]
-    (or (->> access-paths
-             (keep (fn [[v res]]
-                     (if (some (fn [x] (<= 0 (.indexOf path x)))
-                               (get-in project v))
-                       res)))
-             (first))
-        :ignore)))
-
-(defn create-folio [global {:keys [root] :as project}]
-  (data/folio {:global global
-               :root root
-               :project project
-               :reference (data/reference)
-               :registry  (data/registry)}))
-
-(defn mount-folio [{:keys [global project root] :as folio}]
+(defn mount-folio [state {:keys [project root] :as folio}]
   (let [{:keys [source-paths test-paths]} project]
-    (watch/add (io/as-file root) :documentation
+    (watch/add (io/as-file root) :nitrox
                (fn [_ _ _ [type file]]
                  (case type
-                   :create (swap! global update-in [root] analyser/add-file file)
-                   :modify (swap! global update-in [root] analyser/add-file file)
-                   :delete (swap! global update-in [root] analyser/remove-file file)))
+                   :create (swap! state analyser/add-file file)
+                   :modify (swap! state analyser/add-file file)
+                   :delete (swap! state analyser/remove-file file)))
                {:filter  [".clj"]
                 :include (->> (concat source-paths test-paths)
                               (map #(subs % (-> root count inc))))
@@ -53,25 +39,30 @@
   (watch/remove (io/as-file (:root folio)) :documentation))
 
 
-(defn add-project [global {:keys [root] :as project}]
-  (when-not (get @global root)
-    (let [folio (create-folio global project)
-          folio (reduce (fn [folio file]
-                          (add-file folio file))
-                        folio
-                        (util/all-files project :source-paths ".clj"))]
-      (swap! global assoc root (mount-folio folio))))
-  global)
+(defrecord Regulator [state project]
 
-(defn remove-project [global project]
-  (when-let [entry (get @global (:root project))]
-    (unmount-folio entry)
-    (swap! global dissoc (:root project)))
-  global)
+  component/IComponent
+  (-start [obj]
+    (let [folio (create-folio project)
+          folio  (reduce (fn [folio file]
+                           (analyser/add-file folio file))
+                         folio
+                         (concat (util/all-files project :source-paths ".clj")
+                                 (util/all-files project :test-paths ".clj")))]
+      (reset! state folio)
+      (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
+      (mount-folio state folio)))
+  
+  (-stop  [obj]
+    (unmount-folio @state)
+    (reset! state nil))
 
-(defn start
+  (-stopped? [obj]
+    (nil? @state)))
+
+(defn regulator
   ([]
-   (init (project/read "project.clj")))
-  ([{:keys [root src-paths test-paths] :as project}]
-   (let [global (atom {})]
-     (add-project global project))))
+   (regulator nil ;(project/read "project.clj")
+              ))
+  ([project]
+   (Regulator. (atom nil) project)))

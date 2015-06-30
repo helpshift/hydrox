@@ -5,7 +5,7 @@
             [nitrox.common.data :as data]
             [clojure.java.io :as io]
             [hara.data.diff :as diff]))
-            
+
 (def access-paths
   [[[:source-paths]         :source]
    [[:documentation :paths] :doc]
@@ -38,7 +38,7 @@
             (println "Deleting:"    (concat (-> diff :- keys)))
             (-> folio
                 (assoc-in  [:registry fkey] result)
-                (update-in [:reference] diff/patch diff)))
+                (update-in [:references] diff/patch diff)))
 
           :else folio)))
 

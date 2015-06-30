@@ -16,7 +16,7 @@
                    ns-form)
     @store))
 
-(defmethod common/analyse-file :test [_ file]
+(defmethod common/analyse-file :test [_ file opts]
   (let [zloc   (source/of-file file)
         nsloc  (query/$ zloc [(ns | _ & _)] {:walk :top
                                              :return :zipper
