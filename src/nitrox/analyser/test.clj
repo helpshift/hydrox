@@ -8,7 +8,8 @@
             [nitrox.analyser.test
              [common :as test] clojure midje]))
 
-(defn find-frameworks [ns-form]
+(defn find-frameworks
+  [ns-form]
   (let [store (atom #{})]
     (walk/postwalk (fn [form]
                      (if-let [k (test/frameworks form)]
@@ -34,4 +35,3 @@
                    '[clojure.core + :docs]))
   
   (analyse-test-file "test/fact.clj"))
-

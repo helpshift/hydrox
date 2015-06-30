@@ -10,34 +10,34 @@
    [(list '#{defn defmulti} '| (or var '_) '^:%?- string? '^:%?- map? '& '_)]))
 
 (defn edit-file
-  [file var reference edit-fn]
+  [file var references edit-fn]
   (let [zloc (source/of-file file)
         nsp  (-> (query/$ zloc [(ns | _ & _)] {:walk :top})
                  first)
-        edit (edit-fn nsp reference)
+        edit (edit-fn nsp references)
         zloc (-> zloc
                  (query/modify (selector var)
                                edit
                                {:walk :top}))]
     (util/write-to-file zloc file)))
 
-(defn import-fn [nsp reference]
+(defn import-fn [nsp references]
   (fn [zloc]
-    (util/import-location zloc nsp reference)))
+    (util/import-location zloc nsp references)))
 
 (defn import-var
-  [file var reference]
-  (edit-file file var reference import-fn))
+  [file var references]
+  (edit-file file var references import-fn))
 
 (defn import-file
-  [file reference]
-  (edit-file file nil reference import-fn))
+  [file references]
+  (edit-file file nil references import-fn))
 
-(defn import-project [project reference]
+(defn import-project [project references]
   (for [file (util/all-files project :source-paths ".clj")]
-    (import-file file reference)))
+    (import-file file references)))
 
-(defn purge-fn [nsp reference]
+(defn purge-fn [nsp references]
   identity)
 
 (defn purge-var

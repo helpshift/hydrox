@@ -1,6 +1,6 @@
 (ns nitrox.regulator
-  (:require ;;[leiningen.core.project :as project]
-            [nitrox.code.util :as util]
+  (:require [nitrox.code.util :as util]
+            [nitrox.code :as code]
             [nitrox.analyser :as analyser]
             [nitrox.common.data :as data]
             [hara.common.watch :as watch]
@@ -8,7 +8,26 @@
             [hara.component :as component]
             [hara.io.watch]
             [hara.data.diff :as diff]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io])
+  (:refer-clojure :exclude [import]))
+
+(def ^:dynamic *running* #{})
+
+(defn read-project
+  ([] (read-project (io/file "project.clj")))
+  ([file]
+   (let [path  (.getCanonicalPath file) 
+         root  (subs path 0 (- (count path) 12))
+         pform (read-string (slurp file))
+         [_ name version] (take 3 pform)
+         proj  (->> (drop 3 pform)
+                    (concat [:name name
+                             :version version
+                             :root root])
+                    (apply hash-map))]
+     (-> proj
+         (update-in [:source-paths] (fnil identity ["src"]))
+         (update-in [:test-paths] (fnil identity ["test"]))))))
 
 (defn create-folio [{:keys [root] :as project}]
   (data/folio {:meta        {}
@@ -31,38 +50,95 @@
                 :include (->> (concat source-paths test-paths)
                               (map #(subs % (-> root count inc))))
                 :async true})
-    (println "FOLIO MOUNTED:" (:root folio))
     folio))
 
-(defn unmount-folio [folio]
-  (println "FOLIO UNMOUNTED:" (:root folio))
+(defn unmount-folio [folio] 
   (watch/remove (io/as-file (:root folio)) :documentation))
 
+(defn init-folio [{:keys [project] :as folio}]
+  (reduce (fn [folio file]
+            (analyser/add-file folio file))
+          folio
+          (concat (util/all-files project :source-paths ".clj")
+                  (util/all-files project :test-paths ".clj"))))
 
 (defrecord Regulator [state project]
 
   component/IComponent
   (-start [obj]
-    (let [folio (create-folio project)
-          folio  (reduce (fn [folio file]
-                           (analyser/add-file folio file))
-                         folio
-                         (concat (util/all-files project :source-paths ".clj")
-                                 (util/all-files project :test-paths ".clj")))]
+    (let [folio (-> (create-folio project)
+                    (init-folio))]
+      (mount-folio state folio)
       (reset! state folio)
       (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
-      (mount-folio state folio)))
+      (alter-var-root #'*running* (fn [s] (conj s obj)))      
+      obj))
   
   (-stop  [obj]
     (unmount-folio @state)
-    (reset! state nil))
+    (reset! state nil)
+    (event/signal [:log {:msg (str "Regulator for " (:name project) " stopped.")}])
+    (alter-var-root #'*running* (fn [s] (disj s obj)))      
+    obj)
 
   (-stopped? [obj]
     (nil? @state)))
 
 (defn regulator
   ([]
-   (regulator nil ;(project/read "project.clj")
-              ))
+   (regulator (read-project)))
   ([project]
    (Regulator. (atom nil) project)))
+
+(defn import-docstring
+  ([reg] (import-docstring reg :all))
+  ([reg ns] (import-docstring reg ns nil))
+  ([{:keys [state project] :as reg} ns var]
+   (let [{:keys [references]
+          lu :namespace-lu} @state]
+     (cond (= ns :all)
+           (code/import-project project references)
+
+           :else
+           (if-let [file (get lu ns)]
+             (if var
+               (code/import-var file var references)
+               (code/import-file file references)))))))
+
+(defn import [& args]
+  (doseq [reg *running*]
+    (apply import-docstring reg args)))
+
+(defn purge-docstring
+  ([reg] (purge-docstring reg :all))
+  ([reg ns] (purge-docstring reg ns nil))
+  ([{:keys [state project] :as reg} ns var]
+   (let [{lu :namespace-lu} @state]
+     (cond (= ns :all)
+           (code/purge-project project)
+
+           :else
+           (if-let [file (get lu ns)]
+             (if var
+               (code/purge-var file var)
+               (code/purge-file file)))))))
+
+(defn purge [& args]
+  (doseq [reg *running*]
+    (apply purge-docstring reg args)))
+
+(comment
+  (def reg (let [proj  (read-project)
+                 folio (-> proj 
+                           (create-folio)
+                           (init-folio))
+                 state (atom folio)]
+             (Regulator. state folio)))
+
+  (import-docstring reg 'nitrox.analyser.test)
+  (purge-docstring reg 'nitrox.analyser.test)
+  
+  
+  (.getParent(io/file "project.clj")))
+
+

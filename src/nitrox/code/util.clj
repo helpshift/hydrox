@@ -73,11 +73,11 @@
    => (comp not zero?)"
   {:added "0.2"}
   [project path-type extension]
+  (println project path-type)
   (->> project
        path-type
-       (#(if (seq? %) % [%]))
+       (#(if (sequential? %) % [%]))
        (mapcat (fn [dir] (file-seq (io/file dir))))
        (filter (fn [file] (and (.isFile file)
                                (.endsWith (str file) extension))))
        (map #(.getCanonicalFile %))))
-

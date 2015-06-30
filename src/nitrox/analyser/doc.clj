@@ -9,4 +9,6 @@
   [file]
   (let [elements (parse/parse-file file opts)]
     (-> (parse/parse-file file opts)
-        (collect ))))
+        )))
+
+

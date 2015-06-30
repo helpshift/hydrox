@@ -29,16 +29,19 @@
         type (file-type project file)]
     (println "\nProcessing" file)
 
-    (cond #{:source :type}
+    (cond (#{:source :test} type )
           (let [fkey     (.getCanonicalPath file)
                 registry (get-in folio [:registry fkey])
-                result   (common/analyse-file type file)
-                diff     (diff/diff result registry)]
-            (println "Associating:" (concat (-> diff :+ keys) (-> diff :> keys)))
-            (println "Deleting:"    (concat (-> diff :- keys)))
-            (-> folio
-                (assoc-in  [:registry fkey] result)
-                (update-in [:references] diff/patch diff)))
+                result   (common/analyse-file type file project)
+                diff     (diff/diff result registry)
+                _        (do (println "Associating:" (concat (-> diff :+ keys) (-> diff :> keys)))
+                             (println "Deleting:"    (concat (-> diff :- keys))))
+                folio    (-> folio
+                             (assoc-in  [:registry fkey] result)
+                             (update-in [:references] diff/patch diff))]
+            (if (= type :source)
+              (assoc-in folio [:namespace-lu (first (keys result))] fkey)
+              folio))
 
           :else folio)))
 
