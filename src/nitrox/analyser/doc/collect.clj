@@ -20,6 +20,17 @@
        (apply nested/merge-nested {})
        (update-in folio [:meta] (fnil nested/merge-nested {}))))
 
+(defn collect-tags [{:keys [articles] :as folio} name]
+  (->> (get-in articles [name :elements])
+       (reduce (fn [m {:keys [tag] :as ele}]
+                                (cond (nil? tag) m
+
+                                      (get m tag) (do (println "There is already an existing tag for" ele)
+                                                      m)
+                                      :else (conj m tag)))
+               #{})
+       (assoc-in folio [:articles name :tags])))
+
 (comment
 
 

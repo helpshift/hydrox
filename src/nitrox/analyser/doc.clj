@@ -9,11 +9,14 @@
 (defn generate-article [name file folio]
   (let [elements (parse/parse-file file folio)]
     (-> (assoc-in folio [:articles name :elements] elements)
-        (collect/collect-namespaces name)
-        (collect/collect-article name)
         (collect/collect-global name)
+        (collect/collect-article name)
+        (collect/collect-namespaces name)
+        (collect/collect-tags name)
+        (link/link-namespaces name)
+        (link/link-numbers name)
         (link/link-references name)
-        )))
+        (link/link-tags name))))
 
 
 (comment
@@ -23,6 +26,12 @@
   (get-in
    (generate-article "sample" "test/documentation/sub_test.clj" @(:state nitrox.regulator/reg))
    [:articles "sample"])
+
+  (get-in
+   (generate-article "sample" "test/documentation/example_test.clj" @(:state nitrox.regulator/reg))
+   [:articles "sample"])
+  
+  
 
 
   (filter (fn [x] (and (not (node/whitespace? x))

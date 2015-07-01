@@ -14,7 +14,7 @@
   {:type :ns-form
    :indentation *indentation*
    :ns   (-> zloc source/sexpr second)
-   :code [(source/string zloc)]})
+   :code (source/string zloc)})
 
 (defn code-form [zloc symbol]
   (let [s (source/string zloc)]

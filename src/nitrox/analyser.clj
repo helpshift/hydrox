@@ -45,10 +45,6 @@
 
           :else folio)))
 
-(diff/patch '{nitrox.analyser.test {find-frameworks {:source ""}}}
-            '{:+ {[nitrox.analyser.test] {find-frameworks {:docs ""}}}
-              :- [[nitrox.analyser.test find-frameworks :source]]})
-
 (defn remove-file [folio file]
   (let [{:keys [project]} folio
         type (file-type project file)]
