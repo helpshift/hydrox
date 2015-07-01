@@ -60,7 +60,7 @@
             (analyser/add-file folio file))
           folio
           (concat (util/all-files project :source-paths ".clj")
-                  (util/all-files project :test-paths ".clj"))))
+                  #_(util/all-files project :test-paths ".clj"))))
 
 (defrecord Regulator [state project]
 
@@ -133,12 +133,24 @@
                            (create-folio)
                            (init-folio))
                  state (atom folio)]
-             (Regulator. state folio)))
+             (Regulator. state proj)))
 
+  (def reg (let [proj  (read-project)
+                 folio (-> proj 
+                           (create-folio)
+                           (analyser/add-file (io/file "src/nitrox/analyser/test.clj"))
+                           (analyser/add-file (io/file "test/nitrox/analyser/test_test.clj")))
+                 state (atom folio)]
+             (Regulator. state proj)))
+
+  (:references @(:state reg))
+  
+  
   (import-docstring reg 'nitrox.analyser.test)
   (purge-docstring reg 'nitrox.analyser.test)
   
-  
+  @(:state reg)
+  (:project reg)
   (.getParent(io/file "project.clj")))
 
 

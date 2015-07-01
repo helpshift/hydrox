@@ -9,13 +9,19 @@
              [common :as test] clojure midje]))
 
 (defn find-frameworks
+  "finds the corresponding test framework
+
+   (find-frameworks '(ns ...
+                       (:use midje.sweet)))
+   => #{:midje}"
+  {:added "0.1"}
   [ns-form]
-  (let [store (atom #{})]
+  (let [folio (atom #{})]
     (walk/postwalk (fn [form]
                      (if-let [k (test/frameworks form)]
-                       (swap! store conj k)))
+                       (swap! folio conj k)))
                    ns-form)
-    @store))
+    @folio))
 
 (defmethod common/analyse-file :test [_ file opts]
   (let [zloc   (source/of-file file)
@@ -33,5 +39,5 @@
 (comment
   (println (get-in (analyse-test-file "test/example.clj")
                    '[clojure.core + :docs]))
-  
+
   (analyse-test-file "test/fact.clj"))

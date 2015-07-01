@@ -29,7 +29,7 @@
         type (file-type project file)]
     (println "\nProcessing" file)
 
-    (cond (#{:source :test} type )
+    (cond (#{:source :test} type)
           (let [fkey     (.getCanonicalPath file)
                 registry (get-in folio [:registry fkey])
                 result   (common/analyse-file type file project)
@@ -44,6 +44,10 @@
               folio))
 
           :else folio)))
+
+(diff/patch '{nitrox.analyser.test {find-frameworks {:source ""}}}
+            '{:+ {[nitrox.analyser.test] {find-frameworks {:docs ""}}}
+              :- [[nitrox.analyser.test find-frameworks :source]]})
 
 (defn remove-file [folio file]
   (let [{:keys [project]} folio

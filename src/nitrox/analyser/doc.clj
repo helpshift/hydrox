@@ -3,12 +3,34 @@
             [jai.query :as query]
             [nitrox.analyser.common :as common]
             [nitrox.analyser.doc.parse :as parse]
-            [nitrox.analyser.doc.collect :as collect]))
+            [nitrox.analyser.doc.collect :as collect]
+            [nitrox.analyser.doc.link :as link]))
 
-(defmethod common/analyse-file :doc [_ file opts]
-  [file]
-  (let [elements (parse/parse-file file opts)]
-    (-> (parse/parse-file file opts)
+(defn generate-article [name file folio]
+  (let [elements (parse/parse-file file folio)]
+    (-> (assoc-in folio [:articles name :elements] elements)
+        (collect/collect-namespaces name)
+        (collect/collect-article name)
+        (collect/collect-global name)
+        (link/link-references name)
         )))
 
 
+(comment
+  (require '[rewrite-clj.node :as node])
+  
+  
+  (get-in
+   (generate-article "sample" "test/documentation/sub_test.clj" @(:state nitrox.regulator/reg))
+   [:articles "sample"])
+
+
+  (filter (fn [x] (and (not (node/whitespace? x))
+                      (not (string? (node/value x)))))
+   (-> @(:state nitrox.regulator/reg) :references (get-in '[nitrox.analyser.test find-frameworks :docs])))
+  
+  (-> @(:state nitrox.regulator/reg) :references)
+  
+
+  (+ 1 1)
+  )

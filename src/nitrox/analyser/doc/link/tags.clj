@@ -59,11 +59,11 @@
          (do (swap! tags update-in [article] conj candidate)
              (assoc ele :tag candidate)))))
 
-(defn link-tags [store]
-  (let [tags (atom (:tags store))
+(defn link-tags [folio]
+  (let [tags (atom (:tags folio))
         articles (reduce-kv (fn [m article elements]
-                              (let [auto-tag (->> (list (get-in store [:settings :articles article :link :auto-tag])
-                                                        (get-in store [:settings :global :link :auto-tag])
+                              (let [auto-tag (->> (list (get-in folio [:articles article :link :auto-tag])
+                                                        (get-in folio [:meta :link :auto-tag])
                                                         true)
                                                   (drop-while nil?)
                                                   (first))
@@ -82,11 +82,11 @@
                                                      :else ele))
                                              elements))))
                             {}
-                            (:results store))]
-    (assoc store :tags @tags :results articles)))
+                            (:results folio))]
+    (assoc folio :tags @tags :results articles)))
 
-(defn generate-tags [store]
-  (let [tags  (collect-tags (:results store))]
-    (-> store
+(defn generate-tags [folio]
+  (let [tags  (collect-tags (:results folio))]
+    (-> folio
         (assoc :tags tags)
         (link-tags))))

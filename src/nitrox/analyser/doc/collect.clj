@@ -1,22 +1,24 @@
 (ns nitrox.analyser.doc.collect
   (:require [hara.data.nested :as nested]))
 
-(defn collect-namespaces [{:keys [articles] :as store} name]
+(defn collect-namespaces [{:keys [articles] :as folio} name]
   (->> (get-in articles [name :elements])
        (filter #(-> % :type (= :ns-form)))
        (map (juxt :ns identity))
        (into {})
-       (update-in store [:namespaces] (fnil nested/merge-nested {}))))
+       (update-in folio [:namespaces] (fnil nested/merge-nested {}))))
 
-(defn collect-article [{:keys [articles] :as store} name]
+(defn collect-article [{:keys [articles] :as folio} name]
   (->> (get-in articles [name :elements])
        (filter #(-> % :type (= :article)))
-       (map    #(update-in store [:articles name :meta] (fnil nested/merge-nested %)))))
+       (apply nested/merge-nested {})
+       (update-in folio [:articles name :meta] (fnil nested/merge-nested {}))))
 
-(defn collect-global [{:keys [articles] :as store} name]
+(defn collect-global [{:keys [articles] :as folio} name]
   (->> (get-in articles [name :elements])
        (filter #(-> % :type (= :global)))
-       (map    #(update-in store [:meta] (fnil nested/merge-nested %)))))
+       (apply nested/merge-nested {})
+       (update-in folio [:meta] (fnil nested/merge-nested {}))))
 
 (comment
 
