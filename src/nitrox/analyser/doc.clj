@@ -22,7 +22,6 @@
 (comment
   (require '[rewrite-clj.node :as node])
   
-  
   (get-in
    (generate-article "sample" "test/documentation/sub_test.clj" @(:state nitrox.regulator/reg))
    [:articles "sample"])
@@ -41,5 +40,4 @@
   (-> @(:state nitrox.regulator/reg) :references)
   
 
-  (+ 1 1)
-  )
+  (+ 1 1))

@@ -19,7 +19,7 @@
 
 (defn link-numbers-loop
   ([elements auto-number]
-   (link-numbers-loop elements auto-number new-counter []))
+   (link-numbers elements auto-number new-counter []))
   ([[{:keys [type origin] :as ele} & more :as elements]
     auto-number
     {:keys [chapter section subsection subsubsection code image equation] :as counter}
@@ -77,14 +77,19 @@
                  ele)]
        (recur more auto-number counter (conj output ele))))))
 
-(defn link-numbers [{:keys [articles] :as folio} name]
-  (let [auto-number (->> (list (get-in articles [name :link :auto-number])
-                               (get-in folio [:meta :link :auto-number])
-                               true)
-                         (drop-while nil?)
-                         (first))
-        auto-number  (cond (set? auto-number) auto-number
-                           (false? auto-number) #{}
-                           (true? auto-number) #{:image :equation})]
-    (update-in folio [:articles name :elements]
-               link-numbers-loop auto-number)))
+(defn link-numbers [folio name]
+  (update-in folio [:results]
+             (fn [articles]
+               (reduce-kv
+                (fn [m article elements]
+                  (let [auto-number (->> (list (get-in folio [:settings :articles article :link :auto-number])
+                                               (get-in folio [:settings :global :link :auto-number])
+                                               true)
+                                         (drop-while nil?)
+                                         (first))
+                        auto-number  (cond (set? auto-number) auto-number
+                                           (false? auto-number) #{}
+                                           (true? auto-number) #{:image :equation})]
+                    (assoc m article (link-numbers elements auto-number))))
+                {}
+                articles))))
