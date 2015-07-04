@@ -2,6 +2,13 @@
   (:use midje.sweet)
   (:require [nitrox.doc.link :refer :all]
             [nitrox.doc.parse :as parse]
-            [nitrox.regulator :as regulate]))
+            [nitrox.analyser :as analyser]
+            [nitrox.regulator :as regulate]
+            [clojure.java.io :as io]))
 
-(def folio )
+(def folio
+  (-> (regulate/read-project (io/file "example/project.clj"))
+      (regulate/create-folio)))
+
+(def settings
+  (-> folio :project :documentation :files))
