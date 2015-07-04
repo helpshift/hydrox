@@ -1,7 +1,6 @@
 (ns nitrox.doc
   (:require [rewrite-clj.zip :as source]
             [jai.query :as query]
-            [nitrox.analyser.common :as common]
             [nitrox.doc.parse :as parse]
             [nitrox.doc.collect :as collect]
             [nitrox.doc.link :as link]))
@@ -23,11 +22,6 @@
 
 (defn render-article [folio name]
   (let [elements (get-in folio [name ])]))
-
-
-(defmethod common/analyse-file :doc
-  [type file folio]
-  #_(->> ))
 
 
 (comment
