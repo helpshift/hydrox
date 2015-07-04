@@ -15,8 +15,6 @@
          (assoc-in folio [:anchors-lu name]))))
 
 (defn link-anchors [{:keys [anchors-lu articles] :as folio} name]
-  (->> anchors-lu
-       (reduce-kv (fn [m article groups]
-                    (assoc m article (:by-tag groups)))
-                  {})
+  (->> (get anchors-lu name)
+       :by-tag
        (assoc-in folio [:anchors name])))

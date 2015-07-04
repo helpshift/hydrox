@@ -21,7 +21,9 @@
       (stencil/render-string tags)))
 
 (defn link-stencil [folio name]
-  (let [anchors (:anchors folio)]
+  (let [anchors (assoc (:anchors folio)
+                       :PROJECT (:project folio)
+                       :DOCUMENT (get-in folio [:articles name :meta]))]
     (update-in folio [:articles name :elements]
                (fn [elements]
                  (->> elements

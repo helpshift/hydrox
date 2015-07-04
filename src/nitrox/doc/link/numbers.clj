@@ -78,18 +78,14 @@
        (recur more auto-number counter (conj output ele))))))
 
 (defn link-numbers [folio name]
-  (update-in folio [:results]
-             (fn [articles]
-               (reduce-kv
-                (fn [m article elements]
-                  (let [auto-number (->> (list (get-in folio [:settings :articles article :link :auto-number])
-                                               (get-in folio [:settings :global :link :auto-number])
+  (update-in folio [:articles name :elements]
+             (fn [elements]
+               (let [auto-number (->> (list (get-in folio [:articles name :meta :link :auto-number])
+                                               (get-in folio [:meta :link :auto-number])
                                                true)
                                          (drop-while nil?)
                                          (first))
                         auto-number  (cond (set? auto-number) auto-number
                                            (false? auto-number) #{}
                                            (true? auto-number) #{:image :equation})]
-                    (assoc m article (link-numbers elements auto-number))))
-                {}
-                articles))))
+                 (link-numbers-loop elements auto-number)))))

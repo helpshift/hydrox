@@ -18,6 +18,7 @@
                          (let [{:keys [refer mode]} element
                                nsp (symbol (.getNamespace refer))
                                var (symbol (.getName refer))
+                               mode (or mode :source)
                                code (case mode
                                       :source (get-in references [nsp var mode])
                                       :docs   (-> (get-in references [nsp var mode])
@@ -27,6 +28,7 @@
                                   :type :code
                                   :origin :reference
                                   :indentation 0
-                                  :code code))
+                                  :code code
+                                  :mode mode))
                          element))
                      elements))))

@@ -2,23 +2,32 @@
   (:require [hara.data.nested :as nested]))
 
 (defn collect-namespaces [{:keys [articles] :as folio} name]
-  (->> (get-in articles [name :elements])
-       (filter #(-> % :type (= :ns-form)))
-       (map (juxt :ns identity))
-       (into {})
-       (update-in folio [:namespaces] (fnil nested/merge-nested {}))))
+  (let [namespaces (->> (get-in articles [name :elements])
+                        (filter #(-> % :type (= :ns-form)))
+                        (map (juxt :ns identity))
+                        (into {}))]
+    (-> folio
+        (update-in [:namespaces] (fnil nested/merge-nested {}) namespaces)
+        (update-in [:articles name :elements]
+                   (fn [elements] (filter #(-> % :type (not= :ns-form)) elements))))))
 
 (defn collect-article [{:keys [articles] :as folio} name]
-  (->> (get-in articles [name :elements])
+  (let [articles (->> (get-in articles [name :elements])
        (filter #(-> % :type (= :article)))
-       (apply nested/merge-nested {})
-       (update-in folio [:articles name :meta] (fnil nested/merge-nested {}))))
+       (apply nested/merge-nested {}))]
+    (-> folio
+        (update-in [:articles name :meta] (fnil nested/merge-nested {}) articles)
+        (update-in [:articles name :elements]
+                   (fn [elements] (filter #(-> % :type (not= :article)) elements))))))
 
 (defn collect-global [{:keys [articles] :as folio} name]
-  (->> (get-in articles [name :elements])
-       (filter #(-> % :type (= :global)))
-       (apply nested/merge-nested {})
-       (update-in folio [:meta] (fnil nested/merge-nested {}))))
+  (let [global (->> (get-in articles [name :elements])
+                    (filter #(-> % :type (= :global)))
+                    (apply nested/merge-nested {}))]
+    (-> folio
+        (update-in [:meta] (fnil nested/merge-nested {}) global)
+        (update-in [:articles name :elements]
+                   (fn [elements] (filter #(-> % :type (not= :global)) elements))))))
 
 (defn collect-tags [{:keys [articles] :as folio} name]
   (->> (get-in articles [name :elements])
