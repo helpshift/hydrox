@@ -1,7 +1,7 @@
 (ns nitrox.analyser
   (:require [nitrox.analyser
              [common :as common]
-             test source doc]
+             test source]
             [nitrox.common.data :as data]
             [clojure.java.io :as io]
             [hara.data.diff :as diff]))
