@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.link.tags
+(ns nitrox.doc.link.tags
   (:require [hara.string.case :as case]))
 
 (def tag-required?

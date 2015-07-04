@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.link.anchors)
+(ns nitrox.doc.link.anchors)
 
 (defn link-anchors-lu [{:keys [articles] :as folio} name]
   (let [anchors (->> (get-in articles [name :elements])

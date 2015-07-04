@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.link.numbers)
+(ns nitrox.doc.link.numbers)
 
 (def new-counter
   {:chapter 0
@@ -19,7 +19,7 @@
 
 (defn link-numbers-loop
   ([elements auto-number]
-   (link-numbers elements auto-number new-counter []))
+   (link-numbers-loop elements auto-number new-counter []))
   ([[{:keys [type origin] :as ele} & more :as elements]
     auto-number
     {:keys [chapter section subsection subsubsection code image equation] :as counter}

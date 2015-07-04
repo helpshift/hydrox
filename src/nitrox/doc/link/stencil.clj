@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.link.stencil
+(ns nitrox.doc.link.stencil
   (:require [clojure.string :as string]
             [stencil.core :as stencil]))
 

@@ -1,8 +1,8 @@
-(ns nitrox.analyser.doc.parse
+(ns nitrox.doc.parse
   (:require [jai.query :as query]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]
-            [nitrox.analyser.doc.checks :as checks]))
+            [nitrox.doc.checks :as checks]))
 
 (def ^:dynamic *spacing* 2)
 (def ^:dynamic *indentation* 0)

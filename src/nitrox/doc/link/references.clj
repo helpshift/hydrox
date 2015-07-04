@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.link.references
+(ns nitrox.doc.link.references
   (:require [hara.data.nested :as nested]
             [rewrite-clj.node :as node]
             [clojure.string :as string]))

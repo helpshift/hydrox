@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.collect
+(ns nitrox.doc.collect
   (:require [hara.data.nested :as nested]))
 
 (defn collect-namespaces [{:keys [articles] :as folio} name]
@@ -57,7 +57,7 @@
 
 
 (comment
-  (require '[nitrox.analyser.doc.parse :as parse])
+  (require '[nitrox.doc.parse :as parse])
 
   (into {} collect-xf (parse/parse-file "test/documentation/example_test.clj" {:root "/Users/chris/Development/chit/nitrox"}))
 

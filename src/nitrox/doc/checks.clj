@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.checks
+(ns nitrox.doc.checks
   (:require [jai.query :as query]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]))

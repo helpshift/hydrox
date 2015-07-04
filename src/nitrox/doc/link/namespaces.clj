@@ -1,4 +1,4 @@
-(ns nitrox.analyser.doc.link.namespaces)
+(ns nitrox.doc.link.namespaces)
 
 (defn link-namespaces [{:keys [namespaces articles] :as folio} name]
   (update-in folio [:articles name :elements]
