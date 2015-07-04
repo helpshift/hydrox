@@ -1,5 +1,5 @@
-(ns nitrox.analyser
-  (:require [nitrox.analyser
+(ns nitrox.analyse
+  (:require [nitrox.analyse
              [common :as common]
              test source]
             [nitrox.common.data :as data]

@@ -37,7 +37,7 @@
 
   (filter (fn [x] (and (not (node/whitespace? x))
                       (not (string? (node/value x)))))
-   (-> @(:state nitrox.regulator/reg) :references (get-in '[nitrox.analyser.test find-frameworks :docs])))
+   (-> @(:state nitrox.regulator/reg) :references (get-in '[nitrox.analyse.test find-frameworks :docs])))
 
   (-> @(:state nitrox.regulator/reg) :references)
 

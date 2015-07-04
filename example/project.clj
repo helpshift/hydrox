@@ -15,9 +15,9 @@
                             :website "http://z.caudate.me"}]
                   :paths ["test/documentation"]
                   :files {"home"
-                          {:input "test/documentation/example/home.clj"
-                           :template "full"
-                           :title "home"}
+                          {:input "test/documentation/example/home.clj"}
+                          "on-lisp"
+                          {:input "test/documentation/on_lisp/book.clj"}
                           "quickstart"
                           {:input "test/documentation/example/quickstart.clj"}
                           "component"
@@ -30,6 +30,7 @@
                          :theme "clean"
                          :home  "home"
                          :navigation ["quickstart"
+                                      "on-lisp"
                                       ["guides" ["component"
                                                  "ova"
                                                  "watch"

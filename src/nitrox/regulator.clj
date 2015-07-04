@@ -1,7 +1,7 @@
 (ns nitrox.regulator
   (:require [nitrox.code.util :as util]
             [nitrox.code :as code]
-            [nitrox.analyser :as analyser]
+            [nitrox.analyse :as analyser]
             [nitrox.common.data :as data]
             [hara.common.watch :as watch]
             [hara.event :as event]
@@ -16,7 +16,7 @@
 (defn read-project
   ([] (read-project (io/file "project.clj")))
   ([file]
-   (let [path  (.getCanonicalPath file) 
+   (let [path  (.getCanonicalPath file)
          root  (subs path 0 (- (count path) 12))
          pform (read-string (slurp file))
          [_ name version] (take 3 pform)
@@ -52,7 +52,7 @@
                 :async true})
     folio))
 
-(defn unmount-folio [folio] 
+(defn unmount-folio [folio]
   (watch/remove (io/as-file (:root folio)) :documentation))
 
 (defn init-folio [{:keys [project] :as folio}]
@@ -71,14 +71,14 @@
       (mount-folio state folio)
       (reset! state folio)
       (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
-      (alter-var-root #'*running* (fn [s] (conj s obj)))      
+      (alter-var-root #'*running* (fn [s] (conj s obj)))
       obj))
-  
+
   (-stop  [obj]
     (unmount-folio @state)
     (reset! state nil)
     (event/signal [:log {:msg (str "Regulator for " (:name project) " stopped.")}])
-    (alter-var-root #'*running* (fn [s] (disj s obj)))      
+    (alter-var-root #'*running* (fn [s] (disj s obj)))
     obj)
 
   (-stopped? [obj]
@@ -129,14 +129,14 @@
 
 (comment
   (def reg (let [proj  (read-project)
-                 folio (-> proj 
+                 folio (-> proj
                            (create-folio)
                            (init-folio))
                  state (atom folio)]
              (Regulator. state proj)))
 
   (def reg (let [proj  (read-project)
-                 folio (-> proj 
+                 folio (-> proj
                            (create-folio)
                            (analyser/add-file (io/file "src/nitrox/analyser/test.clj"))
                            (analyser/add-file (io/file "test/nitrox/analyser/test_test.clj")))
@@ -144,13 +144,11 @@
              (Regulator. state proj)))
 
   (:references @(:state reg))
-  
-  
-  (import-docstring reg 'nitrox.analyser.test)
-  (purge-docstring reg 'nitrox.analyser.test)
-  
+
+
+  (import-docstring reg 'nitrox.analyse.test)
+  (purge-docstring reg 'nitrox.analyse.test)
+
   @(:state reg)
   (:project reg)
   (.getParent(io/file "project.clj")))
-
-

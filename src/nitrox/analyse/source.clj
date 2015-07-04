@@ -1,7 +1,7 @@
-(ns nitrox.analyser.source
+(ns nitrox.analyse.source
   (:require [rewrite-clj.zip :as source]
             [jai.query :as query]
-            [nitrox.analyser.common :as common]))
+            [nitrox.analyse.common :as common]))
 
 (defmethod common/analyse-file :source [_ file opts]
   "collects the source code for a particular file"

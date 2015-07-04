@@ -1,6 +1,6 @@
-(ns nitrox.analyser.test.clojure
+(ns nitrox.analyse.test.clojure
   (:require [jai.query :as query]
-            [nitrox.analyser.test.common :as common]
+            [nitrox.analyse.test.common :as common]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]
             [clojure.string :as string]))

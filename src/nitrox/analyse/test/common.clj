@@ -1,4 +1,4 @@
-(ns nitrox.analyser.test.common
+(ns nitrox.analyse.test.common
   (:require [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]
             [clojure.string :as string]))

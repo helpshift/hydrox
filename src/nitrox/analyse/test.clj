@@ -1,11 +1,11 @@
-(ns nitrox.analyser.test
+(ns nitrox.analyse.test
     (:require [jai.query :as query]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]
             [clojure.walk :as walk]
             [hara.data.nested :as nested]
-            [nitrox.analyser.common :as common]
-            [nitrox.analyser.test
+            [nitrox.analyse.common :as common]
+            [nitrox.analyse.test
              [common :as test] clojure midje]))
 
 (defn find-frameworks

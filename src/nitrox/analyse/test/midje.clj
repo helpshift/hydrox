@@ -1,9 +1,9 @@
-(ns nitrox.analyser.test.midje
+(ns nitrox.analyse.test.midje
   (:require [jai.query :as query]
             [clojure.string :as string]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]
-            [nitrox.analyser.test.common :as common]))
+            [nitrox.analyse.test.common :as common]))
 
 (defn gather-fact-body
   "collects the required elements from the fact body"
