@@ -1,6 +1,6 @@
-(ns nitrox.regulator
-  (:require [nitrox.code.util :as util]
-            [nitrox.code :as code]
+(ns nitrox.core
+  (:require [nitrox.meta.util :as util]
+            [nitrox.meta :as code]
             [nitrox.analyse :as analyser]
             [nitrox.common.data :as data]
             [hara.common.watch :as watch]

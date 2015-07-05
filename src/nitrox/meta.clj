@@ -1,5 +1,5 @@
-(ns nitrox.code
-  (:require [nitrox.code.util :as util]
+(ns nitrox.meta
+  (:require [nitrox.meta.util :as util]
             [jai.query :as query]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]))
@@ -56,16 +56,16 @@
   (purge-file "src/nitrox/code.clj")
 
   (import-file "src/nitrox/code.clj"
-               {'nitrox.code {'import-var {:docs [(node/string-node "Hello there")]
+               {'nitrox.meta {'import-var {:docs [(node/string-node "Hello there")]
                                            :meta {:added "0.1"}}}})
   (import-var "src/nitrox/code.clj"
               'import-var
-              {'nitrox.code {'import-var {:docs [(node/string-node "Hello there")]
+              {'nitrox.meta {'import-var {:docs [(node/string-node "Hello there")]
                                           :meta {:added "0.1"}}}})
 
   (def z (source/of-file "src/nitrox/code.clj"))
 
   ()
-        
-  
+
+
   )

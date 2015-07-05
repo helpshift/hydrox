@@ -1,4 +1,4 @@
-(ns nitrox.code.util
+(ns nitrox.meta.util
   (:require [clojure.zip :as zip]
             [clojure.string :as string]
             [rewrite-clj.zip :as source]
