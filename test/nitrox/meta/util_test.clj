@@ -43,7 +43,7 @@
 ^{:refer nitrox.meta.util/write-to-file :added "0.1"}
 (fact "exports the zipper contents to file")
 
-^{:refer nitrox.meta.util/all-files :added "0.2"}
+^{:refer nitrox.meta.util/all-files :added "0.1"}
 (fact "finds all files in the project given a context"
 
   (->> (all-files {:root (.getCanonicalPath (io/file "example"))} :root ".md")

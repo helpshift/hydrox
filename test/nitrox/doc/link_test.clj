@@ -4,12 +4,12 @@
             [nitrox.doc.parse :as parse]
             [nitrox.doc :as doc]
             [nitrox.analyse :as analyse]
-            [nitrox.regulator :as regulate]
+            [nitrox.core :as core]
             [clojure.java.io :as io]))
 
 (def folio
-  (-> (regulate/read-project (io/file "example/project.clj"))
-      (regulate/create-folio)))
+  (-> (core/read-project (io/file "example/project.clj"))
+      (core/create-folio)))
 
 (fact "t1 - test for collect-global"
   
@@ -105,3 +105,19 @@
   => '[{:type :chapter, :title "Hello There", :tag "hello", :number "1"}
        {:type :section, :title "Hello World", :tag "world", :number "1.1"}
        {:type :paragraph, :text "1 1.1 0.1.0"}])
+
+
+(fact "t7 - test for plugging more element processors on rendering side"
+  (-> (doc/generate-article folio "stencil"
+                            "test/documentation/short/t7_pluggable.clj")
+      (get-in [:articles "stencil" :elements])
+      first)
+  => {:type :random, :title "Hello There", :tag "hello"})
+
+
+(fact "t8 - test for generating citations"
+  (-> (doc/generate-article folio "citation"
+                            "test/documentation/short/t8_citation.clj")
+      (get-in [:articles "citation" :elements])
+      first)
+  => {:type :paragraph, :text "This is a case of [[2](#2004-bower-thompson)]"})

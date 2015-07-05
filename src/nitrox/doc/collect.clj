@@ -40,9 +40,15 @@
                #{})
        (assoc-in folio [:articles name :tags])))
 
+(defn collect-citations [{:keys [articles] :as folio} name]
+  (let [citations (->> (get-in articles [name :elements])
+                       (filter #(-> % :type (= :citation))))]
+    (-> folio
+        (assoc-in  [:articles name :citations] citations)
+        (update-in [:articles name :elements]
+                   (fn [elements] (filter #(-> % :type (not= :citation)) elements))))))
+
 (comment
-
-
   {:meta        {}
    :articles    {"ova"   {:meta     <>
                           :elements []}}

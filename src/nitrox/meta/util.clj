@@ -96,6 +96,12 @@
        (spit file)))
 
 (defn all-files
+  "finds all files in the project given a context
+ 
+   (->> (all-files {:root (.getCanonicalPath (io/file \"example\"))} :root \".md\")
+        (map #(.getName %)))
+   => [\"README.md\"]"
+  {:added "0.2"}
   [project path-type extension]
   (->> project
        path-type

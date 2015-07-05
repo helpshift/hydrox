@@ -10,7 +10,7 @@
 
 (defn find-frameworks
   "finds the corresponding test framework
- 
+
    (find-frameworks '(ns ...
                        (:use midje.sweet)))
    => #{:midje}"
@@ -23,7 +23,9 @@
                    ns-form)
     @folio))
 
-(defmethod common/analyse-file :test [_ file opts]
+(defmethod common/analyse-file
+  :test
+  [_ file opts]
   (let [zloc   (source/of-file file)
         nsloc  (query/$ zloc [(ns | _ & _)] {:walk :top
                                              :return :zipper

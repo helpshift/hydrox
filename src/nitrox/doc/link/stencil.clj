@@ -2,6 +2,18 @@
   (:require [clojure.string :as string]
             [stencil.core :as stencil]))
 
+(def full-citation-pattern
+  (string/join ["\\[\\["
+                "([^/^\\.^\\{^\\}^\\[^\\]]+)"
+                "/"
+                "([^/^\\.^\\{^\\}^\\[^\\]]+)"
+                "\\]\\]"]))
+
+(def short-citation-pattern
+  (string/join ["\\[\\["
+                "([^/^\\.^\\{^\\}^\\[^\\]]+)"
+                "\\]\\]"]))
+
 (def full-pattern
   (string/join ["\\{\\{"
                 "([^/^\\.^\\{^\\}]+)"
@@ -16,6 +28,8 @@
 
 (defn transform-stencil [string name tags]
   (-> string
+      (.replaceAll full-citation-pattern "[[{{$1/$2}}](#$1)]")
+      (.replaceAll short-citation-pattern "[[{{$1}}](#$1)]")
       (.replaceAll full-pattern  "{{$1.$2.number}}")
       (.replaceAll short-pattern (str "{{" name ".$1.number}}"))
       (stencil/render-string tags)))

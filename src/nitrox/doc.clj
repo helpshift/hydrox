@@ -18,10 +18,11 @@
         (link/link-tags name)
         (link/link-anchors-lu name)
         (link/link-anchors name)
-        (link/link-stencil name))))
+        (link/link-stencil name)
+        (collect/collect-citations name))))
 
 (defn render-article [folio name]
-  (let [elements (get-in folio [name ])]))
+  (let [elements (get-in folio [name :elements])]))
 
 
 (comment

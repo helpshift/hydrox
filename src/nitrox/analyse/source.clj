@@ -3,10 +3,9 @@
             [jai.query :as query]
             [nitrox.analyse.common :as common]))
 
-(defmethod common/analyse-file :source [_ file opts]
-  "collects the source code for a particular file"
-  {:added "0.2"}
-  [file]
+(defmethod common/analyse-file
+  :source
+  [_ file opts]
   (let [zloc (source/of-file file)
         nsp  (->  (query/$ zloc [(ns | _ & _)] {:walk :top})
                   first)

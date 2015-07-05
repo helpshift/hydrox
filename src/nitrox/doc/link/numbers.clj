@@ -7,7 +7,8 @@
    :subsubsection 0
    :code 0
    :image 0
-   :equation 0})
+   :equation 0
+   :citation 0})
 
 (defn increment [count]
   (if (number? count)
@@ -22,12 +23,16 @@
    (link-numbers-loop elements auto-number new-counter []))
   ([[{:keys [type origin] :as ele} & more :as elements]
     auto-number
-    {:keys [chapter section subsection subsubsection code image equation] :as counter}
+    {:keys [chapter section subsection subsubsection code image equation citation] :as counter}
     output]
    (if (empty? elements)
      output
      (let [[numstring counter]
            (case type
+             :citation
+             [(str (inc citation))
+              (assoc counter :citation (inc citation))]
+
              :chapter
              [(str (inc chapter))
               (assoc counter

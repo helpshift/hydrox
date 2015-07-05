@@ -2,7 +2,7 @@
   (:require [hara.string.case :as case]))
 
 (def tag-required?
-  #{:chapter :section :subsection :subsubsection :appendix})
+  #{:chapter :section :subsection :subsubsection :appendix :citation})
 
 (def tag-optional?
   #{:ns :reference :image :equation})
@@ -63,6 +63,6 @@
                                 (nil? (:tag element))
                                 (not  (:hidden element)))
                            (create-tag element name tags)
-                           
+
                            :else element)))
            (assoc-in folio [:articles name :elements])))))
