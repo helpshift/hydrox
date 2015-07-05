@@ -5,3 +5,5 @@
 [[:citation {:mode :url :tag "2012-bower-thompson"}]]
 
 [[:citation {:mode :url :tag "2004-bower-thompson"}]]
+
+[[:bibliography {:mode :full}]]

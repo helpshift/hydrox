@@ -48,6 +48,8 @@
         (update-in [:articles name :elements]
                    (fn [elements] (filter #(-> % :type (not= :citation)) elements))))))
 
+
+
 (comment
   {:meta        {}
    :articles    {"ova"   {:meta     <>
