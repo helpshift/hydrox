@@ -6,6 +6,17 @@
             [clojure.java.io :as io]))
 
 (defn append-node
+  "Adds node as well as whitespace and newline on right
+ 
+   (-> (z/of-string \"(+)\")
+       (z/down)
+       (append-node 2)
+       (append-node 1)
+       (z/->root-string))
+   => (+
+  1
+   2)"
+  {:added "0.1"}
   [zloc node]
   (if node
     (-> zloc
@@ -15,6 +26,11 @@
     zloc))
 
 (defn strip-quotes
+  "gets rid of quotes in a string
+ 
+   (strip-quotes \"\\\"hello\\\"\")
+   => hello"
+  {:added "0.1"}
   [s]
   (if (and (.startsWith s "\"")
            (.endsWith s "\""))
@@ -22,11 +38,27 @@
     s))
 
 (defn escape-quotes
+  "makes sure that quotes are printable in string form
+ 
+   (escape-quotes \"\\\"hello\\\"\")
+   => \\\"hello\\\""
+  {:added "0.1"}
   [s]
   (-> s
       (.replaceAll "(\\\\)?\"" "$1$1\\\\\\\"")))
 
 (defn nodes->docstring
+  "converts nodes to a docstring compatible
+   (->> (z/of-string \"\\\"hello\\\"\n  (+ 1 2)\n => 3 \")
+        (iterate z/right*)
+        (take-while identity)
+        (map z/node)
+        (nodes->docstring)
+        (node/string))
+   => \"hello
+  (+ 1 2)
+   => 3 \""
+  {:added "0.1"}
   [nodes]
   (->> nodes
        (map node/string)
@@ -41,7 +73,10 @@
                            s)))
        (node/string-node)))
 
-(defn import-location [zloc nsp gathered]
+(defn import-location
+  "imports the meta information and docstring"
+  {:added "0.1"}
+  [zloc nsp gathered]
   (let [sym   (source/sexpr zloc)
         nodes (get-in gathered [nsp sym :docs])
         meta  (get-in gathered [nsp sym :meta])]
@@ -49,7 +84,10 @@
         (append-node meta)
         (append-node (if nodes (nodes->docstring nodes))))))
 
-(defn write-to-file [zloc file]
+(defn write-to-file
+  "exports the zipper contents to file"
+  {:added "0.1"}
+  [zloc file]
   (->> (iterate source/right* zloc)
        (take-while identity)
        (map source/node)
@@ -58,22 +96,7 @@
        (spit file)))
 
 (defn all-files
-  "finds all files in the project given a context
- 
-   (->> (all-files (project/read \"project.clj\") :root \".md\")
-        (map #(.getName %)))
-   => [\"README.md\" \"TEST.md\"]
- 
-   (->> (all-files (project/read \"project.clj\") :source-paths \".md\")
-        (map #(.getName %)))
-   => ()
- 
-   (->> (all-files (project/read \"project.clj\") :source-paths \".clj\")
-        (count))
-   => (comp not zero?)"
-  {:added "0.2"}
   [project path-type extension]
-  (println project path-type)
   (->> project
        path-type
        (#(if (sequential? %) % [%]))

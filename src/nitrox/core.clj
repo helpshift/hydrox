@@ -1,6 +1,6 @@
 (ns nitrox.core
   (:require [nitrox.meta.util :as util]
-            [nitrox.meta :as code]
+            [nitrox.meta :as meta]
             [nitrox.analyse :as analyser]
             [nitrox.common.data :as data]
             [hara.common.watch :as watch]
@@ -60,7 +60,7 @@
             (analyser/add-file folio file))
           folio
           (concat (util/all-files project :source-paths ".clj")
-                  #_(util/all-files project :test-paths ".clj"))))
+                  (util/all-files project :test-paths ".clj"))))
 
 (defrecord Regulator [state project]
 
@@ -97,13 +97,13 @@
    (let [{:keys [references]
           lu :namespace-lu} @state]
      (cond (= ns :all)
-           (code/import-project project references)
+           (meta/import-project project references)
 
            :else
            (if-let [file (get lu ns)]
              (if var
-               (code/import-var file var references)
-               (code/import-file file references)))))))
+               (meta/import-var file var references)
+               (meta/import-file file references)))))))
 
 (defn import [& args]
   (doseq [reg *running*]
@@ -115,13 +115,13 @@
   ([{:keys [state project] :as reg} ns var]
    (let [{lu :namespace-lu} @state]
      (cond (= ns :all)
-           (code/purge-project project)
+           (meta/purge-project project)
 
            :else
            (if-let [file (get lu ns)]
              (if var
-               (code/purge-var file var)
-               (code/purge-file file)))))))
+               (meta/purge-var file var)
+               (meta/purge-file file)))))))
 
 (defn purge [& args]
   (doseq [reg *running*]

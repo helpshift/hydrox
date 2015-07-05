@@ -6,7 +6,6 @@
             [nitrox.analyse.test.common :as common]))
 
 (defn gather-fact-body
-  "collects the required elements from the fact body"
   ([zloc]
      (gather-fact-body zloc []))
   ([zloc output]
@@ -24,7 +23,6 @@
            (recur (source/right* zloc) (conj output (source/node zloc))))))
 
 (defn gather-fact
-  "collects information from a fact form"
   [zloc]
   (if-let [mta (common/gather-meta zloc)]
     (assoc mta :docs (gather-fact-body zloc))))

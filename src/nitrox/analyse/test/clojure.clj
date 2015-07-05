@@ -26,7 +26,6 @@
             (node/token-node true "true")]))))
 
 (defn gather-deftest-body
-  "collects the required elements from the fact body"
   ([zloc]
      (gather-deftest-body zloc []))
   ([zloc output]
@@ -47,7 +46,6 @@
            (recur (source/right* zloc) (conj output (source/node zloc))))))
 
 (defn gather-deftest
-  "collects information from a fact form"
   [zloc]
   (if-let [mta (common/gather-meta zloc)]
     (assoc mta :docs (gather-deftest-body zloc))))
