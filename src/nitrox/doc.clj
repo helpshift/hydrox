@@ -8,7 +8,7 @@
              [render :as render]
              [structure :as structure]]))
 
-(defn generate-article [folio name file]
+(defn prepare-article [folio name file]
   (let [elements (parse/parse-file file folio)]
     (-> (assoc-in folio [:articles name :elements] elements)
         (collect/collect-global name)
@@ -24,9 +24,13 @@
         (link/link-stencil name)
         (collect/collect-citations name))))
 
-(defn render-article [folio name]
-  (let [elements (get-in folio [name :elements])]))
-
+(defn generate [{:keys [project] :as folio} name]
+  (let [meta  (-> project :documentation :files (get name))
+        folio (prepare-article folio name (:input meta))
+        elements (get-in folio [:articles name :elements])]
+    (-> elements
+        (structure/structure)
+        (render/render folio))))
 
 (comment
   (require '[rewrite-clj.node :as node])

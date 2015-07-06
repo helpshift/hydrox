@@ -2,7 +2,7 @@
   (:require [hara.namespace.import :as ns]
             [nitrox.doc.render
              [common :as common]
-             toc]))
+             article toc]))
 
 (defn render [element folio]
   (common/render element folio))

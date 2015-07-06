@@ -14,7 +14,17 @@
       (derive :section :subsection)
       (derive :subsection :subsubsection)))
 
-(defn inclusive [x y]
+(defn inclusive
+  "determines which sections are contained by the other
+   (inclusive :article :section) => true
+ 
+   (inclusive :chapter :subsection) => true
+ 
+   (inclusive :chapter :chapter) => false
+ 
+   (inclusive :section :chapter) => false"
+  {:added "0.1"}
+  [x y]
   (if (get containers y)
     (if (not (isa? hierarchy y x))
       true
@@ -22,6 +32,10 @@
     true))
 
 (defn seperate
+  "groups elements in an array 
+   (seperate #(= 1 %) [1 2 2 1 3 4 5])
+   => [[1 2 2] [1 3 4 5]]"
+  {:added "0.1"}
   ([f v]
    (seperate f (rest v) [] (if (first v)
                              [(first v)]
@@ -37,6 +51,21 @@
          (recur f more all (conj current ele)))))
 
 (defn containify
+  "makes a nested vector object from a sequence of elements
+ 
+   (containify [{:type :generic}
+               {:type :paragraph}
+                {:type :chapter}
+                {:type :paragraph}
+                {:type :section}
+                {:type :paragraph}
+                {:type :subsection}
+                {:type :paragraph}
+                {:type :section}
+                {:type :chapter}
+                {:type :section}
+                {:type :appendix}])"
+  {:added "0.1"}
   ([v]
    (->> (containify v [#{:appendix :chapter :generic} :section :subsection :subsubsection])
         (cons {:type :article})
@@ -75,7 +104,47 @@
         (mapv mapify-unit (cons head more))))
 
 
-(defn structure [v]
+(defn structure
+  "creates a nested map structure of elements and their containers
+   (structure [{:type :generic}
+               {:type :paragraph}
+                {:type :chapter}
+                {:type :paragraph}
+                {:type :section}
+                {:type :paragraph}
+                {:type :subsection}
+               {:type :paragraph}
+                {:type :section}
+                {:type :chapter}
+                {:type :section}
+                {:type :appendix}])
+   => {:type :article,
+       :meta {},
+       :elements [{:type :generic,
+                   :meta {},
+                   :elements [{:type :paragraph}]}
+                  {:type :chapter,
+                   :meta {},
+                   :elements [{:type :paragraph}
+                              {:type :section,
+                               :meta {},
+                               :elements [{:type :paragraph}
+                                          {:type :subsection,
+                                           :meta {},
+                                           :elements [{:type :paragraph}]}]}
+                              {:type :section,
+                               :meta {},
+                               :elements []}]}
+                  {:type :chapter,
+                   :meta {},
+                   :elements [{:type :section,
+                               :meta {},
+                               :elements []}]}
+                  {:type :appendix,
+                   :meta {},
+                   :elements []}]}"
+  {:added "0.1"}
+  [v]
   (-> v
       (containify)
       (mapify)))
