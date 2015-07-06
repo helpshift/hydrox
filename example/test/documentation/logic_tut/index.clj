@@ -106,7 +106,7 @@ world. It can't give results for things it doesn't know about."
  => #'fun)
 
 (def fun-people
-  (db [fun 'Bob])
+  (db [fun 'Bob]))
 
 "Let's ask a new kind of question:"
 

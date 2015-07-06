@@ -36,7 +36,7 @@
   (require '[rewrite-clj.node :as node])
 
   (get-in
-   (generate-article "sample" "test/documentation/sub_test.clj" @(:state nitrox.regulator/reg))
+   (generate-article "sample" "test/documentation/sub_test.clj" @(:state nitrox.core/reg))
    [:articles "sample"])
 
   (get-in

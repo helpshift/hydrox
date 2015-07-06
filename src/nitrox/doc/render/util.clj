@@ -27,3 +27,10 @@
 
 (defn markup [data]
   (markdown/md-to-html-string data))
+
+(defn join [data]
+  (cond (string? data)
+        data
+        
+        (vector? data)
+        (string/join data)))

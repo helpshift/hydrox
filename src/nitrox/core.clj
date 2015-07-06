@@ -88,7 +88,9 @@
   ([]
    (regulator (read-project)))
   ([project]
-   (Regulator. (atom nil) project)))
+   (Regulator. (atom nil) project))
+  ([state project]
+   (Regulator. state project)))
 
 (defn import-docstring
   ([reg] (import-docstring reg :all))
@@ -146,7 +148,7 @@
   (:references @(:state reg))
 
 
-  (import-docstring reg 'nitrox.analyse.test)
+  (import-docstring reg 'nitrox.doc.structure)
   (purge-docstring reg 'nitrox.analyse.test)
 
   @(:state reg)

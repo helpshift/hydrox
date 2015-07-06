@@ -3,5 +3,6 @@
 
 (defmethod common/render :article
   [element folio]
-  (vec (concat [:html]
-               (map common/render (:elements element)))))
+  (vec (concat [:div {:class :article}]
+               (map (fn [ele] (common/render ele folio))
+                    (:elements element)))))
