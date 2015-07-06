@@ -51,20 +51,7 @@
          (recur f more all (conj current ele)))))
 
 (defn containify
-  "makes a nested vector object from a sequence of elements
- 
-   (containify [{:type :generic}
-               {:type :paragraph}
-                {:type :chapter}
-                {:type :paragraph}
-                {:type :section}
-                {:type :paragraph}
-                {:type :subsection}
-                {:type :paragraph}
-                {:type :section}
-                {:type :chapter}
-                {:type :section}
-                {:type :appendix}])"
+  
   {:added "0.1"}
   ([v]
    (->> (containify v [#{:appendix :chapter :generic} :section :subsection :subsubsection])
@@ -96,53 +83,14 @@
 
 (defn mapify [[head & more]]
   (cond (get containers (:type head))
-        {:type (:type head)
-         :meta (dissoc head :type)
-         :elements (vec (flatten (map mapify-unit more)))}
+        (assoc head :elements (vec (flatten (map mapify-unit more))))
 
         :else
         (mapv mapify-unit (cons head more))))
 
 
 (defn structure
-  "creates a nested map structure of elements and their containers
-   (structure [{:type :generic}
-               {:type :paragraph}
-                {:type :chapter}
-                {:type :paragraph}
-                {:type :section}
-                {:type :paragraph}
-                {:type :subsection}
-               {:type :paragraph}
-                {:type :section}
-                {:type :chapter}
-                {:type :section}
-                {:type :appendix}])
-   => {:type :article,
-       :meta {},
-       :elements [{:type :generic,
-                   :meta {},
-                   :elements [{:type :paragraph}]}
-                  {:type :chapter,
-                   :meta {},
-                   :elements [{:type :paragraph}
-                              {:type :section,
-                               :meta {},
-                               :elements [{:type :paragraph}
-                                          {:type :subsection,
-                                           :meta {},
-                                           :elements [{:type :paragraph}]}]}
-                              {:type :section,
-                               :meta {},
-                               :elements []}]}
-                  {:type :chapter,
-                   :meta {},
-                   :elements [{:type :section,
-                               :meta {},
-                               :elements []}]}
-                  {:type :appendix,
-                   :meta {},
-                   :elements []}]}"
+  
   {:added "0.1"}
   [v]
   (-> v
