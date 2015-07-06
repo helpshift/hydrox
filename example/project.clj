@@ -16,6 +16,9 @@
                   :paths ["test/documentation"]
                   :files {"home"
                           {:input "test/documentation/example/home.clj"}
+                          "logic"
+                          {:input "test/documentation/logic_tut/index.clj"
+                           :title "Relational and Logic Programming"}
                           "on-lisp"
                           {:input "test/documentation/on_lisp/book.clj"}
                           "quickstart"

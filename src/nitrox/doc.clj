@@ -1,9 +1,12 @@
 (ns nitrox.doc
   (:require [rewrite-clj.zip :as source]
             [jai.query :as query]
-            [nitrox.doc.parse :as parse]
-            [nitrox.doc.collect :as collect]
-            [nitrox.doc.link :as link]))
+            [nitrox.doc
+             [collect :as collect]
+             [link :as link]
+             [parse :as parse]
+             [render :as render]
+             [structure :as structure]]))
 
 (defn generate-article [folio name file]
   (let [elements (parse/parse-file file folio)]
