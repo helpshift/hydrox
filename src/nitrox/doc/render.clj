@@ -1,8 +1,21 @@
 (ns nitrox.doc.render
-  (:require [hara.namespace.import :as ns]
-            [nitrox.doc.render
-             [common :as common]
-             article toc]))
+  (:require [nitrox.doc.render
+             [article :as article]
+             [navbar :as navbar]
+             [toc :as toc]]
+            [hiccup.compiler :as compiler]
+            [clojure.string :as string]))
 
-(defn render [element folio]
-  (common/render element folio))
+(defn render-article [{:keys [elements]} folio]
+  (->> elements
+       (map #(article/render % folio))
+       (#'compiler/compile-seq)
+       (string/join)))
+
+(defn render-navbar [{:keys [elements]} folio]
+  (let [chapters (filter (fn [e] (#{:chapter :appendix} (:type e)))
+                         elements)]
+    (->> chapters
+         (map #(navbar/render % folio))
+         (#'compiler/compile-seq)
+         (string/join))))

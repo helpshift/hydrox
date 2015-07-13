@@ -106,7 +106,7 @@
   (->> project
        path-type
        (#(if (sequential? %) % [%]))
-       (mapcat (fn [dir] (file-seq (io/file dir))))
+       (mapcat (fn [dir] (file-seq (io/file (str (:root project) "/" dir)))))
        (filter (fn [file] (and (.isFile file)
                                (.endsWith (str file) extension))))
        (map #(.getCanonicalFile %))))

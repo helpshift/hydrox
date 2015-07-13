@@ -25,12 +25,11 @@
         (collect/collect-citations name))))
 
 (defn generate [{:keys [project] :as folio} name]
-  (let [meta  (-> project :documentation :files (get name))
-        folio (prepare-article folio name (:input meta))
-        elements (get-in folio [:articles name :elements])]
-    (-> elements
-        (structure/structure)
-        (render/render folio))))
+  (let [meta       (-> project :documentation :files (get name))
+        folio      (prepare-article folio name (:input meta))
+        elements   (get-in folio [:articles name :elements])
+        structure  (structure/structure elements)]
+    structure))
 
 (comment
   (require '[rewrite-clj.node :as node])

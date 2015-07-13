@@ -97,7 +97,7 @@ We can ask for more than one answer:"
 "The same result. That's because we’ve only told the computer that two men exist in the
 world. It can't give results for things it doesn't know about."
 
-[[:section {:title "Fun Guys"}]]
+[[:section {:title "Fun People"}]]
 
 "Let's define another kind of relationship and a fact:"
 

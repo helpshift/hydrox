@@ -17,7 +17,8 @@
 (defn tag-string [s]
   (-> (case/spear-case s)
       (.replaceAll "\\." "-")
-      (.replaceAll "/" "--")))
+      (.replaceAll "/" "--")
+      (.replaceAll "[^\\d^\\w^-]" "")))
 
 (defn create-candidate [{:keys [origin title type] :as element}]
   (cond origin
@@ -26,10 +27,10 @@
           :reference (tag-string (str (name (:mode element)) "-" (:refer element))))
 
         title
-        (case/spear-case title)
+        (tag-string title)
 
         (= :image type)
-        (tag-string "img-" (:src element))))
+        (tag-string (str "img-" (:src element)))))
 
 (defn create-tag
   ([element name tags]
