@@ -14,7 +14,7 @@
 
 (defn basic-html-escape
   [data]
-  (clojure.string/escape data { \< "&lt;" \> "&gt;" \& "&amp;" \" "&quot;" }))
+  (clojure.string/escape data { \< "&lt;" \> "&gt;" \& "&amp;" \" "&quot;" \\ "&#92;"}))
 
 (defn basic-html-unescape
   [data]
