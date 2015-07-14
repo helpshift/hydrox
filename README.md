@@ -1,9 +1,9 @@
-# nitrox
+# hydrox
 
 
 ## Usage
 
-  this is just a brain dump of the functionality that will be availibale for nitrox
+  this is just a brain dump of the functionality that will be availibale for hydrox
 
   - so the first functionality will be being able to watch a project for changes
 
@@ -11,7 +11,7 @@
 
   - The third is to be able to use the database to generate code
 
-  - Create a .nitrox directory
+  - Create a .hydrox directory
               - meta.edn
               - <project>.datomic
 
@@ -22,7 +22,7 @@
 
   API
 
-  (./nitrox)
+  (./hydrox)
   - updates git logs
   - updates git 
 
@@ -39,7 +39,7 @@
   (./doc-purge  <ns/var>)
     
   (./doc-source <ns/var> <version>)
-  (./doc-test   nitrox.core/query "0.2.1")
+  (./doc-test   hydrox.core/query "0.2.1")
     
   (./doc-gen)
   (./doc-gen "0.3.1") for a particular version)

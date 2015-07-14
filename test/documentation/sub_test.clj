@@ -1,10 +1,10 @@
 (ns documentation.sub-test
   (:use midje.sweet)
-  (:require [nitrox.analyse.test]))
+  (:require [hydrox.analyse.test]))
 
 (comment
   (hello there))
 
 [[:ns {}]]
 
-[[:reference {:refer nitrox.analyse.test/find-frameworks :mode :source}]]
+[[:reference {:refer hydrox.analyse.test/find-frameworks :mode :source}]]
