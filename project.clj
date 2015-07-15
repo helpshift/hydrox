@@ -15,6 +15,10 @@
                  ;;[im.chit/adi  "0.3.2-SNAPSHOT"]
                  ;;[com.datomic/datomic-free "0.9.5173" :exclusions [joda-time]]
                  ]
-  :profiles {:dev {:dependencies [[midje "1.6.3"]]
+  :profiles {:dev {:dependencies [[midje "1.6.3"]
+                                  ;[compojure "1.1.5"]
+                                  ;[ring "1.2.0"]
+                                  
+                                  ]
                    :plugins [[lein-midje "3.1.3"]
                              [lein-ancient "0.6.7"]]}})
