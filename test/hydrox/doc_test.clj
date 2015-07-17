@@ -37,7 +37,7 @@
           (.replaceFirst "<@=article>"  (render/render-article skele @(:state reg)))
           (.replaceFirst "<@=footer>"    "")
           (->> (spit "../hara-front/dash/src/hara-io-scheduler.html"))))
-  
+ 
   (do (def skele (generate @(:state reg) "hara-component"))
       (-> (slurp "../hara-front/dash/src/template.html")
           (.replaceAll "<@=title>"    "hara.component")

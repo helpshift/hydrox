@@ -77,11 +77,13 @@
   :image
   [{:keys [tag title text number] :as element} folio]
   [:div {:class "figure"}
-     (if tag [:a {:name tag}])
-     (if number
-       [:h4 [:i (str "fig." number
-                     (if title (str "  &nbsp;-&nbsp; " title)))]])
-   [:img (dissoc element :number :type :tag :text :title)]])
+   (if tag [:a {:name tag}])
+   [:div {:class "img"}
+    [:img (dissoc element :number :type :tag :text :title)]]
+   (if number
+     [:h4 [:i (str "fig." number
+                   (if title (str "  &nbsp;-&nbsp; " title)))]])
+   ])
 
 (comment (defmethod render
            :article
