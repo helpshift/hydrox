@@ -1,4 +1,4 @@
-(ns hydrox.doc.render.navbar
+(ns hydrox.doc.render.navigation
   (:require [hydrox.doc.render.util :as util]))
 
 (defmulti render (fn [element folio] (:type element)))

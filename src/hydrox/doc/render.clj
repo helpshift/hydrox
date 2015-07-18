@@ -1,7 +1,7 @@
 (ns hydrox.doc.render
   (:require [hydrox.doc.render
              [article :as article]
-             [navbar :as navbar]
+             [navigation :as navigation]
              [toc :as toc]]
             [hiccup.compiler :as compiler]
             [clojure.string :as string]))
@@ -12,10 +12,10 @@
        (#'compiler/compile-seq)
        (string/join)))
 
-(defn render-navbar [{:keys [elements]} folio]
+(defn render-navigation [{:keys [elements]} folio]
   (let [chapters (filter (fn [e] (#{:chapter :appendix} (:type e)))
                          elements)]
     (->> chapters
-         (map #(navbar/render % folio))
+         (map #(navigation/render % folio))
          (#'compiler/compile-seq)
          (string/join))))
