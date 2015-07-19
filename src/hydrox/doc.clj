@@ -1,7 +1,8 @@
 (ns hydrox.doc
   (:require [rewrite-clj.zip :as source]
             [jai.query :as query]
-            [hydrox.doc
+            [hydrox.common.util :as util]
+            [hydrox.doc 
              [collect :as collect]
              [link :as link]
              [parse :as parse]
@@ -31,22 +32,44 @@
         structure  (structure/structure elements)]
     structure))
 
-(comment
-  (require '[rewrite-clj.node :as node])
+(defn find-includes [html]
+  (->> html
+       (re-seq #"<@=([^>^<]+)>")
+       (map second)
+       (map keyword)
+       set))
 
-  (get-in
-   (generate-article "sample" "test/documentation/sub_test.clj" @(:state hydrox.core/reg))
-   [:articles "sample"])
+(defn prepare-includes [name includes folio]
+  (let [no-doc (->> (filter (fn [[k v]] (#{:article :navigation} v)) includes)
+                    empty?)]
+    (cond no-doc
+          includes
 
-  (get-in
-   (generate-article "sample" "test/documentation/example_test.clj" @(:state hydrox.regulator/reg))
-   [:articles "sample"])
+          :else
+          (let [elements (generate folio name)]
+            (reduce-kv (fn [out k v]
+                         (assoc out k (case v
+                                        :article    (render/render-article elements folio)
+                                        :navigation (render/render-navigation elements folio)
+                                        v)))
+                       {}
+                       includes)))))
 
-  (filter (fn [x] (and (not (node/whitespace? x))
-                      (not (string? (node/value x)))))
-   (-> @(:state hydrox.regulator/reg) :references (get-in '[hydrox.analyse.test find-frameworks :docs])))
+(defn render-entry [name entry folio]
+  (let [project        (:project folio)
+        opts           (:documentation project)
+        entry          (merge (util/filter-strings project) (-> opts :template :defaults) entry)
+        template-path  (util/full-path (:template entry) (-> opts :template :path) project)
+        output-path    (util/full-path (str name ".html") (:output opts) project)
+        template       (slurp template-path)
+        includes       (->> (find-includes template)
+                            (select-keys entry))
+        includes       (prepare-includes name includes folio)
+        html           (render/replace-template template includes opts project)]
+    (spit output-path html)))
 
-  (-> @(:state hydrox.regulator/reg) :references)
-
-
-  (+ 1 1))
+(defn render-all [folio]
+  (let [opts (-> folio :project :documentation)]
+    (doseq [[name entry] (:files opts)]
+      (println "Rendering" name)
+      (render-entry name entry folio))))
