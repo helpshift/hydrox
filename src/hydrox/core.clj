@@ -42,18 +42,21 @@
   (let [{:keys [source-paths test-paths]} project]
     (watch/add (io/as-file root) :hydrox
                (fn [_ _ _ [type file]]
+                 (println "File Changed:" file)
                  (case type
                    :create (swap! state analyser/add-file file)
                    :modify (swap! state analyser/add-file file)
                    :delete (swap! state analyser/remove-file file)))
                {:filter  [".clj"]
-                :include (->> (concat source-paths test-paths)
-                              (map #(subs % (-> root count inc))))
-                :async true})
+                :includes (->> (concat source-paths test-paths)
+                               (map #(str root "/" %)))})
     folio))
 
-(defn unmount-folio [folio]
-  (watch/remove (io/as-file (:root folio)) :documentation))
+(defn unmount-folio [{:keys [root] :as folio}]
+  (if root
+    (do (watch/remove (io/as-file root) :hydrox)
+        true)
+    false))
 
 (defn init-folio [{:keys [project] :as folio}]
   (reduce (fn [folio file]
@@ -66,8 +69,10 @@
 
   component/IComponent
   (-start [obj]
-    (let [folio (-> (create-folio project)
-                    (init-folio))]
+    (let [folio (create-folio project)
+          folio (if (:initialise folio)
+                  (init-folio folio)
+                  folio)]
       (mount-folio state folio)
       (reset! state folio)
       (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
@@ -130,6 +135,13 @@
     (apply purge-docstring reg args)))
 
 (comment
+  (def reg (component/start (regulator (read-project (io/file "../hara/project.clj")))))
+
+  hara.io.watch/*filewatchers*
+  (component/stop reg)
+  (component/stop reg)
+  (unmount-folio @(:state reg))
+  *running*
   (def reg (let [proj  (read-project)
                  folio (-> proj
                            (create-folio)
@@ -145,8 +157,9 @@
                  state (atom folio)]
              (Regulator. state proj)))
 
+  (.getCanonicalPath (io/file "src"))
+  
   (:references @(:state reg))
-
 
   (import-docstring reg 'hydrox.doc.structure)
   (purge-docstring reg 'hydrox.analyse.test)
