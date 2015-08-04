@@ -5,28 +5,21 @@
             [clojure.java.io :as io]
             [hiccup.core :as html]))
 
-
-
-
-(comment
-  
-  
-
-
-
-
-
-  (-> dopts :files (get "index")))
-
 (comment
 
+  (clojure.lang.Namespace/findOrCreate 'a)
+  (clojure.lang.Namespace/remove 'a)
+
+  (doc/render-all @(:state reg))
+  
   (def reg (let [proj  (core/read-project (io/file "../hara/project.clj"))
-                   folio (-> proj
-                             (core/create-folio)
-                             (core/init-folio))
-                   state (atom folio)]
+                 folio (-> proj
+                           (core/create-folio)
+                           ;;(core/init-folio)
+                           )
+                 state (atom folio)]
              (core/regulator state proj)))
-
+  
   (swap! (:state reg)
          assoc :project (core/read-project (io/file "../hara/project.clj")))
 
