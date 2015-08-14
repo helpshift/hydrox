@@ -37,6 +37,11 @@
     (subs s 1 (dec (count s)))
     s))
 
+(defn escape-escapes
+  [s]
+  (-> s
+      (.replaceAll "(\\\\)([A-Za-z])" "$1$1$2")))
+
 (defn escape-quotes
   "makes sure that quotes are printable in string form
  
@@ -49,21 +54,30 @@
 
 (defn nodes->docstring
   "converts nodes to a docstring compatible
-   (->> (z/of-string \"\\\"hello\\\"\n  (+ 1 2)\n => 3 \")
+   (->> (z/of-string \"\\\"hello\\\"\\n  (+ 1 2)\\n => 3 \")
         (iterate z/right*)
         (take-while identity)
         (map z/node)
         (nodes->docstring)
         (node/string))
    => \"hello
-  (+ 1 2)
-   => 3 \""
+   (+ 1 2)
+   => 3 \"
+ 
+   (->> (z/of-string \"[\\\e \\\d]\")
+        (iterate z/right*)
+        (take-while identity)
+        (map z/node)
+        (nodes->docstring)
+       (node/string))
+   => \"[\\\e \\\d]\""
   {:added "0.1"}
   [nodes]
   (->> nodes
        (map node/string)
        (map strip-quotes)
        (string/join)
+       (escape-escapes)
        (escape-quotes)
        (string/split-lines)
        (map-indexed (fn [i s]
@@ -101,7 +115,7 @@
    (->> (all-files {:root (.getCanonicalPath (io/file \"example\"))} :root \".md\")
         (map #(.getName %)))
    => [\"README.md\"]"
-  {:added "0.2"}
+  {:added "0.1"}
   [project path-type extension]
   (->> project
        path-type

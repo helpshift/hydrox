@@ -11,14 +11,17 @@
   (clojure.lang.Namespace/remove 'a)
 
   (doc/render-all @(:state reg))
-  
-  (def reg (let [proj  (core/read-project (io/file "../hara/project.clj"))
+
+  (def reg (let [proj  (core/read-project (io/file "../../chit/hara/project.clj"))
                  folio (-> proj
                            (core/create-folio)
-                           ;;(core/init-folio)
+                           (core/init-folio)
                            )
                  state (atom folio)]
              (core/regulator state proj)))
+
+
+  (core/import-docstring reg)
   
   (swap! (:state reg)
          assoc :project (core/read-project (io/file "../hara/project.clj")))

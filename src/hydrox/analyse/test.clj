@@ -10,7 +10,7 @@
 
 (defn find-frameworks
   "finds the corresponding test framework
-
+ 
    (find-frameworks '(ns ...
                        (:use midje.sweet)))
    => #{:midje}"

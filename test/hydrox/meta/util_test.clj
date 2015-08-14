@@ -35,7 +35,15 @@
        (map z/node)
        (nodes->docstring)
        (node/string))
-  => "\"hello\n   (+ 1 2)\n  => 3 \"")
+  => "\"hello\n   (+ 1 2)\n  => 3 \""
+
+  (->> (z/of-string "[\\e \\d]")
+       (iterate z/right*)
+       (take-while identity)
+       (map z/node)
+       (nodes->docstring)
+       (node/string))
+  => "\"[\\\\e \\\\d]\"")
 
 ^{:refer hydrox.meta.util/import-location :added "0.1"}
 (fact "imports the meta information and docstring")
