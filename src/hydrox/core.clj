@@ -92,7 +92,17 @@
   ([state project]
    (Regulator. state project)))
 
+(defn once-off
+  [path]
+  (let [proj  (read-project (io/file path))
+        folio (-> proj
+                  (create-folio)
+                  (init-folio))
+        state (atom folio)]
+    (regulator state proj)))
+
 (defn import-docstring
+  ([] )
   ([reg] (import-docstring reg :all))
   ([reg ns] (import-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
@@ -149,7 +159,7 @@
 
   (:references @(:state reg))
 
-
+  
   (import-docstring reg 'hydrox.doc.structure)
   (purge-docstring reg 'hydrox.analyse.test)
 
