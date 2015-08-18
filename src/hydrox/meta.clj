@@ -63,9 +63,4 @@
               {'hydrox.meta {'import-var {:docs [(node/string-node "Hello there")]
                                           :meta {:added "0.1"}}}})
 
-  (def z (source/of-file "src/hydrox/code.clj"))
-
-  ()
-
-
-  )
+  (def z (source/of-file "src/hydrox/code.clj")))

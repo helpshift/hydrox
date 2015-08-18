@@ -42,8 +42,9 @@
        (take-while identity)
        (map z/node)
        (nodes->docstring)
-       (node/string))
-  => "\"[\\\\e \\\\d]\"")
+       (str)
+       (read-string))
+  => "[\\e \\d]")
 
 ^{:refer hydrox.meta.util/import-location :added "0.1"}
 (fact "imports the meta information and docstring")

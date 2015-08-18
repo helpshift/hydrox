@@ -64,13 +64,14 @@
    (+ 1 2)
    => 3 \"
  
-   (->> (z/of-string \"[\\e \\d]\")
+   (->> (z/of-string (str [\\e \\d]))
         (iterate z/right*)
         (take-while identity)
         (map z/node)
         (nodes->docstring)
-       (node/string))
-   => \"[\\e \\d]\""
+        (str)
+        (read-string))
+   => [\\e \\d]"
   {:added "0.1"}
   [nodes]
   (->> nodes
@@ -112,7 +113,7 @@
 (defn all-files
   "finds all files in the project given a context
  
-   (->> (all-files {:root (.getCanonicalPath (io/file \"example\"))} :root \".md\")
+   (->> (all-files {:root (.getCanonicalPath (io/file \"example\"))} :root \"md\")
         (map #(.getName %)))
    => [\"README.md\"]"
   {:added "0.1"}

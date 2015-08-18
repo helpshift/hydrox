@@ -9,12 +9,6 @@
              [common :as test] clojure midje]))
 
 (defn find-frameworks
-  "finds the corresponding test framework
- 
-   (find-frameworks '(ns ...
-                       (:use midje.sweet)))
-   => #{:midje}"
-  {:added "0.1"}
   [ns-form]
   (let [folio (atom #{})]
     (walk/postwalk (fn [form]
