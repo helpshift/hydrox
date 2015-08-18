@@ -22,12 +22,11 @@
 [[:ns {:caption "current namespace"}]]
 
 (facts "hello world"
-  (+ 1 1) => 1
-  
+  (+ 1 1) => 2
+
   "Give me some code"
-  
-  (+ 2 3) 
+
+  (+ 2 3)
   => 5)
 
-[[:ns {:caption "" :ns clojure.core}]]
-  
+[[:ns {:caption "" :refer "clojure.core"}]]

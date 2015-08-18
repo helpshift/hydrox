@@ -64,13 +64,13 @@
    (+ 1 2)
    => 3 \"
  
-   (->> (z/of-string \"[\\\e \\\d]\")
+   (->> (z/of-string \"[\\e \\d]\")
         (iterate z/right*)
         (take-while identity)
         (map z/node)
         (nodes->docstring)
        (node/string))
-   => \"[\\\e \\\d]\""
+   => \"[\\e \\d]\""
   {:added "0.1"}
   [nodes]
   (->> nodes
