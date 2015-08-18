@@ -159,6 +159,7 @@
 
   (:references @(:state reg))
 
+  (import-docstring (once-off "project.clj"))
   
   (import-docstring reg 'hydrox.doc.structure)
   (purge-docstring reg 'hydrox.analyse.test)

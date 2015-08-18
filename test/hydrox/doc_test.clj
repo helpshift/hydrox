@@ -5,6 +5,7 @@
             [clojure.java.io :as io]
             [hiccup.core :as html]))
 
+
 (comment
 
   (clojure.lang.Namespace/findOrCreate 'a)
@@ -15,12 +16,13 @@
   (def reg (let [proj  (core/read-project (io/file "../../chit/hara/project.clj"))
                  folio (-> proj
                            (core/create-folio)
-                           (core/init-folio)
-                           )
+                           (core/init-folio))
                  state (atom folio)]
              (core/regulator state proj)))
+  
+  
 
-
+  (core/import-docstring (core/once-off "project.clj"))
   (core/import-docstring reg)
   
   (swap! (:state reg)
