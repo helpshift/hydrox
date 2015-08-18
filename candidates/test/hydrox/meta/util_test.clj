@@ -54,6 +54,6 @@
 ^{:refer hydrox.meta.util/all-files :added "0.1"}
 (fact "finds all files in the project given a context"
 
-  (->> (all-files {:root (.getCanonicalPath (io/file "example"))} :root "md")
+  (->> (all-files {:root (.getCanonicalPath (io/file "example"))} :root ".md")
        (map #(.getName %)))
   => ["README.md"])

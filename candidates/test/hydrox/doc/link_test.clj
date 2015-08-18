@@ -12,16 +12,16 @@
       (core/create-folio)))
 
 (fact "t1 - test for collect-global"
-  
-  (:meta (doc/generate-article folio
+
+  (:meta (doc/generate folio
                                "global"
                                "test/documentation/short/t1_global.clj"))
   => {:type :global, :tracking "UA-31320512-2", :link {:auto-number true, :auto-tag true}})
 
 
 (fact "t2 - test for collect-article"
-  
-  (get-in (doc/generate-article folio
+
+  (get-in (doc/generate folio
                                 "article"
                                 "test/documentation/short/t2_article.clj")
           [:articles "article" :meta])
@@ -29,8 +29,8 @@
 
 
 (fact "t3 - test for link-namespace"
-  
-  (-> (doc/generate-article folio
+
+  (-> (doc/generate folio
                             "namespaces"
                             "test/documentation/short/t3_namespaces.clj")
       (get-in [:articles "namespaces" :elements])
@@ -43,7 +43,7 @@
           :code "(ns documentation.short.t3-namespaces)"
           :tag "ns-documentation-short-t3-namespaces"}
 
-  (-> (doc/generate-article folio
+  (-> (doc/generate folio
                             "namespaces"
                             "test/documentation/short/t3_namespaces.clj")
       (select-keys [:anchors-lu :anchors]))
@@ -59,17 +59,17 @@
 
 (fact "t4 - test for link-numbers"
 
-  (-> (doc/generate-article folio
+  (-> (doc/generate folio
                             "numbers"
                             "test/documentation/short/t4_numbers.clj")
       (get-in [:articles "numbers" :elements])
       (#(map :number %)))
   => ["1" "1.1" "1.2" "1.3" "1.4" "2" "3" "4" "5"]
 
-  (-> (doc/generate-article folio
+  (-> (doc/generate folio
                             "numbers"
                             "test/documentation/short/t4_numbers.clj")
-      
+
       (get-in [:anchors-lu "numbers" :by-number]))
   => {:chapter {"1" {:type :chapter, :tag "an-unexpected-party", :number "1"},
                 "2" {:type :chapter, :tag "roast-mutton", :number "2"},
@@ -85,7 +85,7 @@
 
   (-> folio
       (analyse/add-file (io/file "example/src/example/core.clj"))
-      (doc/generate-article "references"
+      (doc/generate "references"
                             "test/documentation/short/t5_references.clj")
       (get-in [:articles "references" :elements])
       first)
@@ -99,7 +99,7 @@
 
 
 (fact "t6 - test for link-stencil"
-  (-> (doc/generate-article folio "stencil"
+  (-> (doc/generate folio "stencil"
                             "test/documentation/short/t6_stencil.clj")
       (get-in [:articles "stencil" :elements]))
   => '[{:type :chapter, :title "Hello There", :tag "hello", :number "1"}
@@ -108,7 +108,7 @@
 
 
 (fact "t7 - test for plugging more element processors on rendering side"
-  (-> (doc/generate-article folio "stencil"
+  (-> (doc/generate folio "stencil"
                             "test/documentation/short/t7_pluggable.clj")
       (get-in [:articles "stencil" :elements])
       first)
@@ -116,7 +116,7 @@
 
 
 (fact "t8 - test for generating citations"
-  (-> (doc/generate-article folio "citation"
+  (-> (doc/generate folio "citation"
                             "test/documentation/short/t8_citation.clj")
       (get-in [:articles "citation" :elements])
       first)
