@@ -89,5 +89,25 @@
   [folio file]
   (let [{:keys [project]} folio
         type (file-type project file)]
-    (println "REMOVING (TODO)" type file)
-    folio))
+    (println "\nRemoving" file)
+
+    (cond (#{:source :test} type)
+          (let [fkey     (.getCanonicalPath file)
+                registry (get-in folio [:registry fkey])
+                diff     (diff/diff {} registry)
+                _        (do (println "Associating:" (concat (-> diff :+ keys) (-> diff :> keys)))
+                             (println "Deleting:"    (concat (-> diff :- keys))))
+                folio    (-> folio
+                             (update-in [:registry] dissoc  fkey)
+                             (update-in [:references] diff/patch diff))]
+            (if (= type :source)
+              (update-in folio [:namespace-lu]
+                         (fn [m] (reduce-kv (fn [out k v]
+                                              (if (= v fkey)
+                                                out
+                                                (assoc out k v)))
+                                           {}
+                                           m)))
+              folio))
+          
+          :else folio)))
