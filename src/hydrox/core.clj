@@ -63,7 +63,7 @@
                   (util/all-files project :test-paths ".clj"))))
 
 (defn start-regulator
-  [obj]
+  [{:keys [project state] :as obj}]
   (let [folio (-> (create-folio project)
                   (init-folio))]
     (mount-folio state folio)
@@ -73,7 +73,7 @@
     obj))
 
 (defn stop-regulator
-  [obj]
+  [{:keys [project state] :as obj}]
   (unmount-folio @state)
   (reset! state nil)
   (event/signal [:log {:msg (str "Regulator for " (:name project) " stopped.")}])
