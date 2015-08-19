@@ -1,6 +1,7 @@
 (ns hydrox.doc.link.tags-test
   (:use midje.sweet)
-  (:require [hydrox.doc.link.tags :refer :all]))
+  (:require [hydrox.doc.link.tags :refer :all]
+            [hydrox.doc.collect :as collect]))
 
 ^{:refer hydrox.doc.link.tags/inc-candidate :added "0.1"}
 (fact "creates an incremental version of a name"
@@ -26,7 +27,6 @@
   (create-candidate {:type :image :src "http://github.com/hello/gather.jpeg"})
   => "img-http----github-com--hello--gather-jpeg")
 
-
 ^{:refer hydrox.doc.link.tags/create-tag :added "0.1"}
 (fact "creates a tag from an element"
 
@@ -39,3 +39,15 @@
         result (create-tag {:title "hello"} tags)]
     [@tags result])
   => [#{"hello" "hello-0"} {:title "hello", :tag "hello-0"}])
+
+^{:refer hydrox.doc.link.tags/link-tags :added "0.1"}
+(fact "creates a tag for elements within the article"
+  (-> {:articles {"example" {:elements [{:type :chapter :title "hello world"}
+                                        {:type :chapter :title "hello world"}]}}}
+      (collect/collect-tags "example")
+      (link-tags "example"))
+  => {:articles
+      {"example"
+       {:elements [{:type :chapter, :title "hello world", :tag "hello-world"}
+                   {:type :chapter, :title "hello world", :tag "hello-world-0"}],
+        :tags #{}}}})
