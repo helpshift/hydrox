@@ -9,7 +9,7 @@
 
 (defn inc-candidate
   "creates an incremental version of a name
-
+   
    (inc-candidate \"hello\") => \"hello-0\"
    (inc-candidate \"hello-1\") => \"hello-2\""
   {:added "0.1"}
@@ -22,7 +22,7 @@
 
 (defn tag-string
   "creates a string that can be used as an anchor
-
+   
    (tag-string \"hello.world/again\")
    => \"hello-world--again\""
   {:added "0.1"}
@@ -34,13 +34,13 @@
 
 (defn create-candidate
   "creates a candidate tag from a variety of sources
-
+ 
    (create-candidate {:origin :ns :ns 'clojure.core})
    => \"ns-clojure-core\"
-
+ 
    (create-candidate {:title \"hello again\"})
    => \"hello-again\"
-
+ 
    (create-candidate {:type :image :src \"http://github.com/hello/gather.jpeg\"})
    => \"img-http----github-com--hello--gather-jpeg\""
   {:added "0.1"}
@@ -58,12 +58,12 @@
 
 (defn create-tag
   "creates a tag from an element
-
+ 
    (let [tags (atom #{})
          result (create-tag {:title \"hello\"} tags)]
      [@tags result])
    => [#{\"hello\"} {:title \"hello\", :tag \"hello\"}]
-
+ 
    (let [tags (atom #{\"hello\"})
          result (create-tag {:title \"hello\"} tags)]
      [@tags result])

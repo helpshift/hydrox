@@ -82,12 +82,4 @@
     [:img (dissoc element :number :type :tag :text :title)]]
    (if number
      [:h4 [:i (str "fig." number
-                   (if title (str "  &nbsp;-&nbsp; " title)))]])
-   ])
-
-(comment (defmethod render
-           :article
-           [element folio]
-           (vec (concat [:div {:class :article}]
-                        (map (fn [ele] (render ele folio))
-                             (:elements element))))))
+                   (if title (str "  &nbsp;-&nbsp; " title)))]])])

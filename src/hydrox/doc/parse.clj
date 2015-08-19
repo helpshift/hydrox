@@ -106,13 +106,11 @@
 (defn parse-loop
   ([zloc opts] (parse-loop zloc opts nil []))
   ([zloc opts current output]
-   ;;(println zloc (source/node zloc))
    (cond (nil? zloc)
          (merge-current output current)
 
          :else
          (let [element (parse-single zloc)]
-           ;;(prn "ELEMENT" element)
            (cond (= (:type current) :attribute)
                  (if (not= :whitespace (:type element))
                    (recur (source/right* zloc) opts (merge current element) output)
@@ -138,7 +136,6 @@
                    (recur (source/right* zloc) opts element (merge-current output current))))))))
 
 (defn parse-file [file opts]
-
   ;; For developement purposes
   (parse-loop (source/of-file (str (:root opts) "/" file)) opts))
 
