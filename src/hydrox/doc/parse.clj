@@ -10,18 +10,42 @@
 
 (declare parse-file parse-facts-form)
 
-(defn parse-ns-form [zloc]
+(defn parse-ns-form
+  "converts a ns zipper into an element
+
+   (-> (z/of-string \"(ns example.core)\")
+       (parse-ns-form))
+   => '{:type :ns-form
+        :indentation 0
+        :ns example.core
+        :code \"(ns example.core)\"}"
+  {:added "0.1"}
+  [zloc]
   {:type :ns-form
    :indentation *indentation*
    :ns   (-> zloc source/sexpr second)
    :code (source/string zloc)})
 
-(defn code-form [zloc symbol]
+(defn code-form
+  "converts a form zipper into a code string
+
+   (-> (z/of-string \"(fact (+ 1 1) \\n => 2)\")
+       (code-form 'fact))
+   => \"(+ 1 1) \\n  => 2\""
+  {:added "0.1"}
+  [zloc symbol]
   (let [s (source/string zloc)]
     (-> (.substring s 1 (dec (.length s)))
         (.replaceFirst (str symbol "(\\s+)?") ""))))
 
-(defn parse-fact-form [zloc]
+(defn parse-fact-form
+  "convert a fact zipper into an element
+
+   (-> (z/of-string \"(fact (+ 1 1) \\n => 2)\")
+       (parse-fact-form))
+   => {:type :block :indentation 2 :code \"(+ 1 1) \\n => 2\"}"
+  {:added "0.1"}
+  [zloc]
   {:type :block
    :indentation (+ *indentation* *spacing*)
    :code (code-form zloc "fact")})
@@ -29,16 +53,40 @@
 (defn parse-facts-form [zloc]
   {:type :facts})
 
-(defn parse-comment-form [zloc]
+(defn parse-comment-form
+  "convert a comment zipper into an element
+
+   (-> (z/of-string \"(comment (+ 1 1) \\n => 2)\")
+       (parse-comment-form))
+   => {:type :block :indentation 2 :code \"(+ 1 1) \\n => 2\"}"
+  {:added "0.1"}
+  [zloc]
   {:type :block
    :indentation (+ *indentation* *spacing*)
    :code (code-form zloc "comment")})
 
-(defn parse-paragraph [zloc]
+(defn parse-paragraph
+  "converts a string zipper into an element
+   (-> (z/of-string \"\\\"this is a paragraph\\\"\")
+       (parse-paragraph))
+   => {:type :paragraph :text \"this is a paragraph\"}"
+  {:added "0.1"}
+  [zloc]
   {:type :paragraph
    :text (source/sexpr zloc)})
 
-(defn parse-directive [zloc]
+(defn parse-directive
+  "converts a directive zipper into an element
+   (-> (z/of-string \"[[:chapter {:title \\\"hello world\\\"}]]\")
+       (parse-directive))
+   => {:type :chapter :title \"hello world\"}
+
+   (binding [*namespace* 'example.core]
+     (-> (z/of-string \"[[:ns {:title \\\"hello world\\\"}]]\")
+         (parse-directive)))
+   => {:type :ns, :title \"hello world\", :ns 'example.core}"
+  {:added "0.1"}
+  [zloc]
   (let [tloc       (-> zloc source/down source/down)
         tag        (-> tloc source/sexpr)
         attributes (-> tloc source/right source/sexpr)
@@ -47,7 +95,13 @@
       (assoc directive :ns *namespace*)
       directive)))
 
-(defn parse-attribute [zloc]
+(defn parse-attribute
+  "coverts an attribute zipper into an element
+   (-> (z/of-string \"[[{:title \\\"hello world\\\"}]]\")
+       (parse-attribute))
+   => {:type :attribute, :title \"hello world\"}"
+  {:added "0.1"}
+  [zloc]
   (let [attributes (-> zloc source/down source/down source/sexpr)]
     (assoc attributes :type :attribute)))
 
@@ -55,7 +109,12 @@
   {:type :whitespace
    :code [(node/string (source/node zloc))]})
 
-(defn parse-code [zloc]
+(defn parse-code
+  "coverts a code zipper into an element
+   (-> (z/of-string \"(+ 1 1) (+ 2 2)\")
+       (parse-code))
+   => {:type :code, :indentation 0, :code [\"(+ 1 1)\"]}"
+  {:added "0.1"} [zloc]
   {:type :code
    :indentation *indentation*
    :code [(node/string (source/node zloc))]})
@@ -104,6 +163,16 @@
         :else (conj output current)))
 
 (defn parse-loop
+  "the main loop for the parser
+   (-> (z/of-string \"(ns example.core)
+                     [[:chapter {:title \\\"hello\\\"}]]
+                     (+ 1 1)
+                     (+ 2 2)\")
+       (parse-loop {}))
+   => [{:type :ns-form :indentation 0 :ns 'example.core :code \"(ns example.core)\"}
+       {:type :chapter :title \"hello\"}
+      {:type :code :indentation 0 :code [\"(+ 1 1)\" \" \" \"(+ 2 2)\"]}]"
+  {:added "0.1"}
   ([zloc opts] (parse-loop zloc opts nil []))
   ([zloc opts current output]
    (cond (nil? zloc)

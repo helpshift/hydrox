@@ -34,7 +34,7 @@
                                   :label "two"}}}}
    "example")
   => {:articles {"example" {:meta {:name "world"},
-                            :elements ({:type :paragraph, :text "0.1 world"}
-                                       {:type :paragraph, :text "2 two"})}},
+                            :elements [{:type :paragraph, :text "0.1 world"}
+                                       {:type :paragraph, :text "2 two"}]}},
       :project {:version "0.1"},
       :anchors {"example" {"hello" {:number 2, :label "two"}}}})
