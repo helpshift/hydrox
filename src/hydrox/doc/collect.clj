@@ -30,7 +30,8 @@
     \"example\")
    => '{:articles {\"example\" {:elements []
                               :meta {:options {:color :light}}}}}"
-  {:added "0.1"} [{:keys [articles] :as folio} name]
+  {:added "0.1"}
+  [{:keys [articles] :as folio} name]
   (let [articles (->> (get-in articles [name :elements])
        (filter #(-> % :type (= :article)))
        (apply nested/merge-nested {}))]

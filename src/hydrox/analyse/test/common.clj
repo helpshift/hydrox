@@ -31,9 +31,7 @@
    (-> (z/of-string \"\\\"hello\\nworld\\nalready\\\"\")
        (gather-string)
        (str))
-   => \"hello
-   world
-   already\""
+   => \"\"hello\\n  world\\n  already\"\""
   {:added "0.1"}
   [zloc]
   (node/string-node (->> (source/sexpr zloc)
@@ -46,7 +44,7 @@
   "takes away the quotes from a string for formatting purposes
  
    (strip-quotes \"\\\"hello\\\"\")
-   => hello"
+   => \"hello\""
   {:added "0.1"}
   [s]
   (if (and (.startsWith s "\"")
@@ -57,5 +55,5 @@
 (defn join-nodes [nodes]
   (->> nodes
        (map node/string)
-       (map strip-quotes)
+       ;;(map strip-quotes)
        (string/join)))

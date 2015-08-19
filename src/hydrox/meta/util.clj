@@ -13,9 +13,7 @@
        (append-node 2)
        (append-node 1)
        (z/->root-string))
-   => (+
-  1
-   2)"
+   => \"(+\\n  1\\n  2)\""
   {:added "0.1"}
   [zloc node]
   (if node
@@ -25,17 +23,26 @@
         (zip/insert-right (node/newline-node "\n")))
     zloc))
 
+(defn has-quotes?
+  [s]
+  (and (.startsWith s "\"")
+           (.endsWith s "\"")))
+
 (defn strip-quotes
   "gets rid of quotes in a string
  
    (strip-quotes \"\\\"hello\\\"\")
-   => hello"
+   => \"hello\""
   {:added "0.1"}
   [s]
-  (if (and (.startsWith s "\"")
-           (.endsWith s "\""))
+  (if (has-quotes? s) 
     (subs s 1 (dec (count s)))
     s))
+
+(defn escape-newlines
+  [s]
+  (-> s
+      (.replaceAll "\\n" "\\\\n")))
 
 (defn escape-escapes
   [s]
@@ -46,11 +53,24 @@
   "makes sure that quotes are printable in string form
  
    (escape-quotes \"\\\"hello\\\"\")
-   => \\\"hello\\\""
+   => \"\\\"hello\\\"\""
   {:added "0.1"}
   [s]
   (-> s
       (.replaceAll "(\\\\)?\"" "$1$1\\\\\\\"")))
+
+(defn strip-quotes-array
+  ([arr] (strip-quotes-array arr nil nil []))
+  ([[x & more] p1 p2 out]
+   (cond (nil? x)
+         out
+
+         :else
+         (recur more x p1 (conj out (if (= p2 "=>")
+                                      (if (has-quotes? x)
+                                        (escape-newlines x)
+                                        x)
+                                      (strip-quotes x)))))))
 
 (defn nodes->docstring
   "converts nodes to a docstring compatible
@@ -60,23 +80,21 @@
         (map z/node)
         (nodes->docstring)
         (node/string))
-   => \"hello
-   (+ 1 2)
-   => 3 \"
+   => \"\"hello\\n  (+ 1 2)\\n  => 3 \"\"
  
    (->> (z/of-string (str [\\e \\d]))
         (iterate z/right*)
         (take-while identity)
         (map z/node)
         (nodes->docstring)
-       (str)
+        (str)
         (read-string))
-   => [\\e \\d]"
+  => \"[\\e \\d]\""
   {:added "0.1"}
   [nodes]
   (->> nodes
        (map node/string)
-       (map strip-quotes)
+       (strip-quotes-array)
        (string/join)
        (escape-escapes)
        (escape-quotes)

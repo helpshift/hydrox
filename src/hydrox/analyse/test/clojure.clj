@@ -8,12 +8,10 @@
 (defn gather-is-form
   "Make docstring notation out of is form
    (common/join-nodes (gather-is-form (z/of-string \"(is (= 1 1))\")))
-   => 1
-   => 1
+   => \"1\\n  => 1\"
  
    (common/join-nodes (gather-is-form (z/of-string \"(is (boolean? 4))\")))
-   => (boolean? 4)
-   => true"
+   => \"(boolean? 4)\\n  => true\""
   {:added "0.1"}
   ([zloc]
    (let [zloc (-> zloc source/down source/right)]
@@ -63,11 +61,7 @@
        (gather-deftest)
        :docs
        common/join-nodes)
-  => Sample test program
-   1
-   => 1
-   (identical? 2 4)
-   => true"
+  => \"Sample test program\\n  1\\n  => 1\\n  (identical? 2 4)\\n  => true\""
   {:added "0.1"}
   [zloc]
   (if-let [mta (common/gather-meta zloc)]
