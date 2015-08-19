@@ -23,6 +23,18 @@
            (recur (source/right* zloc) (conj output (source/node zloc))))))
 
 (defn gather-fact
+  "Make docstring notation out of fact form
+   (-> \"^{:refer example/hello-world :added \\\"0.1\\\"}
+        (fact \\\"Sample test program\\\"\\n  (+ 1 1) => 2\\n  (long? 3) => true)\"
+       (z/of-string)
+       z/down z/right z/down z/right
+       (gather-fact)
+       :docs
+       common/join-nodes)
+  => Sample test program
+   (+ 1 1) => 2
+   (long? 3) => true"
+  {:added "0.1"}
   [zloc]
   (if-let [mta (common/gather-meta zloc)]
     (assoc mta :docs (gather-fact-body zloc))))

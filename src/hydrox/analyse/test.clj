@@ -9,6 +9,15 @@
              [common :as test] clojure midje]))
 
 (defn find-frameworks
+  "find test frameworks given a namespace form
+   (find-frameworks '(ns ...
+                       (:use midje.sweet)))
+   => #{:midje}
+ 
+   (find-frameworks '(ns ...
+                       (:use clojure.test)))
+   => #{:clojure}"
+  {:added "0.1"}
   [ns-form]
   (let [folio (atom #{})]
     (walk/postwalk (fn [form]
@@ -17,9 +26,8 @@
                    ns-form)
     @folio))
 
-(defmethod common/analyse-file
-  :test
-  [_ file opts]
+(defn analyse-test-file
+  [file opts]
   (let [zloc   (source/of-file file)
         nsloc  (query/$ zloc [(ns | _ & _)] {:walk :top
                                              :return :zipper
@@ -32,8 +40,7 @@
                 (test/analyse-test framework zloc)))
          (apply nested/merge-nested))))
 
-(comment
-  (println (get-in (analyse-test-file "test/example.clj")
-                   '[clojure.core + :docs]))
-
-  (analyse-test-file "test/fact.clj"))
+(defmethod common/analyse-file
+  :test
+  [_ file opts]
+  (analyse-test-file file opts))

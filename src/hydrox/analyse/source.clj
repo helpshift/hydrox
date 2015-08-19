@@ -3,9 +3,8 @@
             [jai.query :as query]
             [hydrox.analyse.common :as common]))
 
-(defmethod common/analyse-file
-  :source
-  [_ file opts]
+(defn analyse-source-file
+  [file opts]
   (let [zloc (source/of-file file)
         nsp  (->  (query/$ zloc [(ns | _ & _)] {:walk :top})
                   first)
@@ -17,3 +16,8 @@
                                    source/up)))
                   (into {}))]
     {nsp fns}))
+
+(defmethod common/analyse-file
+  :source
+  [_ file opts]
+  (analyse-source-file file opts))

@@ -6,6 +6,15 @@
             [clojure.string :as string]))
 
 (defn gather-is-form
+  "Make docstring notation out of is form
+   (common/join-nodes (gather-is-form (z/of-string \"(is (= 1 1))\")))
+   => 1
+   => 1
+ 
+   (common/join-nodes (gather-is-form (z/of-string \"(is (boolean? 4))\")))
+   => (boolean? 4)
+   => true"
+  {:added "0.1"}
   ([zloc]
    (let [zloc (-> zloc source/down source/right)]
      (cond (query/match zloc '(= _ _))
@@ -46,6 +55,20 @@
            (recur (source/right* zloc) (conj output (source/node zloc))))))
 
 (defn gather-deftest
+  "Make docstring notation out of deftest form
+   (-> \"^{:refer example/hello-world :added \\\"0.1\\\"}
+        (deftest hello-world-test\\n  \\\"Sample test program\\\"\\n  (is (= 1 1))\\n  (is (identical? 2 4)))\"
+       (z/of-string)
+       z/down z/right z/down z/right z/right
+       (gather-deftest)
+       :docs
+       common/join-nodes)
+  => Sample test program
+   1
+   => 1
+   (identical? 2 4)
+   => true"
+  {:added "0.1"}
   [zloc]
   (if-let [mta (common/gather-meta zloc)]
     (assoc mta :docs (gather-deftest-body zloc))))

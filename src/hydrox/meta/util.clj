@@ -69,7 +69,7 @@
         (take-while identity)
         (map z/node)
         (nodes->docstring)
-        (str)
+       (str)
         (read-string))
    => [\\e \\d]"
   {:added "0.1"}
