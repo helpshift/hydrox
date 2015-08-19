@@ -12,7 +12,7 @@
 
 (defn parse-ns-form
   "converts a ns zipper into an element
-
+ 
    (-> (z/of-string \"(ns example.core)\")
        (parse-ns-form))
    => '{:type :ns-form
@@ -28,7 +28,7 @@
 
 (defn code-form
   "converts a form zipper into a code string
-
+   
    (-> (z/of-string \"(fact (+ 1 1) \\n => 2)\")
        (code-form 'fact))
    => \"(+ 1 1) \\n  => 2\""
@@ -40,7 +40,7 @@
 
 (defn parse-fact-form
   "convert a fact zipper into an element
-
+ 
    (-> (z/of-string \"(fact (+ 1 1) \\n => 2)\")
        (parse-fact-form))
    => {:type :block :indentation 2 :code \"(+ 1 1) \\n => 2\"}"
@@ -55,7 +55,7 @@
 
 (defn parse-comment-form
   "convert a comment zipper into an element
-
+ 
    (-> (z/of-string \"(comment (+ 1 1) \\n => 2)\")
        (parse-comment-form))
    => {:type :block :indentation 2 :code \"(+ 1 1) \\n => 2\"}"
@@ -80,7 +80,7 @@
    (-> (z/of-string \"[[:chapter {:title \\\"hello world\\\"}]]\")
        (parse-directive))
    => {:type :chapter :title \"hello world\"}
-
+ 
    (binding [*namespace* 'example.core]
      (-> (z/of-string \"[[:ns {:title \\\"hello world\\\"}]]\")
          (parse-directive)))
@@ -114,7 +114,8 @@
    (-> (z/of-string \"(+ 1 1) (+ 2 2)\")
        (parse-code))
    => {:type :code, :indentation 0, :code [\"(+ 1 1)\"]}"
-  {:added "0.1"} [zloc]
+  {:added "0.1"}
+  [zloc]
   {:type :code
    :indentation *indentation*
    :code [(node/string (source/node zloc))]})
@@ -164,14 +165,18 @@
 
 (defn parse-loop
   "the main loop for the parser
-   (-> (z/of-string \"(ns example.core)
-                     [[:chapter {:title \\\"hello\\\"}]]
-                     (+ 1 1)
+   (-> (z/of-string \"(ns example.core) 
+                     [[:chapter {:title \\\"hello\\\"}]] 
+                     (+ 1 1) 
                      (+ 2 2)\")
        (parse-loop {}))
-   => [{:type :ns-form :indentation 0 :ns 'example.core :code \"(ns example.core)\"}
-       {:type :chapter :title \"hello\"}
-      {:type :code :indentation 0 :code [\"(+ 1 1)\" \" \" \"(+ 2 2)\"]}]"
+   => [{:type :ns-form, :indentation 0, :ns 'example.core, :code \"(ns example.core)\"}
+       {:type :chapter, :title \"hello\"}
+      {:type :code, :indentation 0, :code [\"(+ 1 1)\"
+                                            \" \"
+                                            \"\\n\"
+                                            \"                    \"
+                                            \"(+ 2 2)\"]}]"
   {:added "0.1"}
   ([zloc opts] (parse-loop zloc opts nil []))
   ([zloc opts current output]

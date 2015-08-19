@@ -1,5 +1,8 @@
 # hydrox
 
+[![Build Status](https://travis-ci.org/helpshift/hydrox.svg?branch=master)](https://travis-ci.org/helpshift/hydrox)
+
+dive deeper into your code
 
 ## Usage
 
@@ -15,16 +18,16 @@
               - meta.edn
               - <project>.datomic
 
-              
+
   - Import the saved git versions of the project and to be able to generate versions
-  - Every save creates a version that is attached to the current git sha of the project for amendments           
-  
+  - Every save creates a version that is attached to the current git sha of the project for amendments
+
 
   API
 
   (./hydrox)
   - updates git logs
-  - updates git 
+  - updates git
 
   ;; basically creates everything from the project file
 
@@ -37,10 +40,10 @@
   (./doc-purge  <file>)
   (./doc-purge  <ns>)
   (./doc-purge  <ns/var>)
-    
+
   (./doc-source <ns/var> <version>)
   (./doc-test   hydrox.core/query "0.2.1")
-    
+
   (./doc-gen)
   (./doc-gen "0.3.1") for a particular version)
 
