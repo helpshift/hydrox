@@ -24,6 +24,11 @@
     zloc))
 
 (defn has-quotes?
+  "checks if a string has quotes
+ 
+   (has-quotes? \"\\\"hello\\\"\")
+   => true"
+  {:added "0.1"}
   [s]
   (and (.startsWith s "\"")
            (.endsWith s "\"")))
@@ -40,11 +45,21 @@
     s))
 
 (defn escape-newlines
+  "makes sure that newlines are printable
+ 
+   (escape-newlines \"\\\n\")
+   => \"\\n\""
+  {:added "0.1"}
   [s]
   (-> s
       (.replaceAll "\\n" "\\\\n")))
 
 (defn escape-escapes
+  "makes sure that newlines are printable
+ 
+   (escape-escapes \"\\\n\")
+   => \"\\\n\""
+  {:added "0.1"}
   [s]
   (-> s
       (.replaceAll "(\\\\)([A-Za-z])" "$1$1$2")))
@@ -60,6 +75,13 @@
       (.replaceAll "(\\\\)?\"" "$1$1\\\\\\\"")))
 
 (defn strip-quotes-array
+  "utility that strips quotes when not the result of a fact
+   (strip-quotes-array [\"\\\"hello\\\"\"])
+   => [\"hello\"]
+   
+   (strip-quotes-array [\"(str \\\"hello\\\")\" \" \" \"=>\" \" \" \"\\\"hello\\\"\"])
+   => [\"(str \\\"hello\\\")\" \" \" \"=>\" \" \" \"\\\"hello\\\"\"]"
+  {:added "0.1"}
   ([arr] (strip-quotes-array arr nil nil []))
   ([[x & more] p1 p2 out]
    (cond (nil? x)

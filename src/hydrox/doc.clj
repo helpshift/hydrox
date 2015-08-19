@@ -2,14 +2,17 @@
   (:require [rewrite-clj.zip :as source]
             [jai.query :as query]
             [hydrox.common.util :as util]
-            [hydrox.doc 
+            [hydrox.doc
              [collect :as collect]
              [link :as link]
              [parse :as parse]
              [render :as render]
              [structure :as structure]]))
 
-(defn prepare-article [folio name file]
+(defn prepare-article
+  "generates the flat outline for rendering"
+  {:added "0.1"}
+  [folio name file]
   (let [elements (parse/parse-file file folio)]
     (-> (assoc-in folio [:articles name :elements] elements)
         (collect/collect-global name)
@@ -25,21 +28,33 @@
         (link/link-stencil name)
         (collect/collect-citations name))))
 
-(defn generate [{:keys [project] :as folio} name]
+(defn generate
+  "generates the tree outline for rendering"
+  {:added "0.1"}
+  [{:keys [project] :as folio} name]
   (let [meta       (-> project :documentation :files (get name))
         folio      (prepare-article folio name (:input meta))
         elements   (get-in folio [:articles name :elements])
         structure  (structure/structure elements)]
     structure))
 
-(defn find-includes [html]
+(defn find-includes
+  "finds elements with `@=` tags
+   
+   (find-includes \"<@=hello> <@=world>\")
+   => #{:hello :world}"
+  {:added "0.1"}
+  [html]
   (->> html
        (re-seq #"<@=([^>^<]+)>")
        (map second)
        (map keyword)
        set))
 
-(defn prepare-includes [name includes folio]
+(defn prepare-includes
+  "prepare template accept includes"
+  {:added "0.1"}
+  [name includes folio]
   (let [no-doc (->> (filter (fn [[k v]] (#{:article :navigation} v)) includes)
                     empty?)]
     (cond no-doc
@@ -55,7 +70,10 @@
                        {}
                        includes)))))
 
-(defn render-entry [name entry folio]
+(defn render-entry
+  "render for a single entry in the project.clj map"
+  {:added "0.1"}
+  [name entry folio]
   (let [project        (:project folio)
         opts           (:documentation project)
         entry          (merge (util/filter-strings project) (-> opts :template :defaults) entry)
@@ -68,7 +86,10 @@
         html           (render/replace-template template includes opts project)]
     (spit output-path html)))
 
-(defn render-all [folio]
+(defn render-all
+  "render for all documentation entries in the project.clj map"
+  {:added "0.1"}
+  [folio]
   (let [opts (-> folio :project :documentation)]
     (doseq [[name entry] (:files opts)]
       (println "Rendering" name)

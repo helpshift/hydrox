@@ -62,24 +62,29 @@
           (concat (util/all-files project :source-paths ".clj")
                   (util/all-files project :test-paths ".clj"))))
 
+(defn start-regulator
+  [obj]
+  (let [folio (-> (create-folio project)
+                  (init-folio))]
+    (mount-folio state folio)
+    (reset! state folio)
+    (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
+    (alter-var-root #'*running* (fn [s] (conj s obj)))
+    obj))
+
+(defn stop-regulator
+  [obj]
+  (unmount-folio @state)
+  (reset! state nil)
+  (event/signal [:log {:msg (str "Regulator for " (:name project) " stopped.")}])
+  (alter-var-root #'*running* (fn [s] (disj s obj)))
+  obj)
+
 (defrecord Regulator [state project]
 
   component/IComponent
-  (-start [obj]
-    (let [folio (-> (create-folio project)
-                    (init-folio))]
-      (mount-folio state folio)
-      (reset! state folio)
-      (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
-      (alter-var-root #'*running* (fn [s] (conj s obj)))
-      obj))
-
-  (-stop  [obj]
-    (unmount-folio @state)
-    (reset! state nil)
-    (event/signal [:log {:msg (str "Regulator for " (:name project) " stopped.")}])
-    (alter-var-root #'*running* (fn [s] (disj s obj)))
-    obj)
+  (-start [obj] (start-regulator obj))
+  (-stop  [obj] (stop-regulator obj))
 
   (-stopped? [obj]
     (nil? @state)))
@@ -160,7 +165,7 @@
   (:references @(:state reg))
 
   (import-docstring (once-off "project.clj"))
-  
+
   (import-docstring reg 'hydrox.doc.structure)
   (purge-docstring reg 'hydrox.analyse.test)
 

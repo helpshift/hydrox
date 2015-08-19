@@ -5,11 +5,18 @@
             [rewrite-clj.node :as node]))
 
 (defn selector
+  "builds a selector for functions
+   
+   (selector 'hello)
+   => '[(#{defn defmulti} | hello ^:%?- string? ^:%?- map? & _)]"
+  {:added "0.1"}
   ([] (selector nil))
   ([var]
    [(list '#{defn defmulti} '| (or var '_) '^:%?- string? '^:%?- map? '& '_)]))
 
 (defn edit-file
+  "helper function for file manipulation used by import and purge"
+  {:added "0.1"}
   [file var references edit-fn]
   (let [zloc (source/of-file file)
         nsp  (-> (query/$ zloc [(ns | _ & _)] {:walk :top})

@@ -4,6 +4,12 @@
             [hydrox.analyse.common :as common]))
 
 (defn analyse-source-file
+  "analyses a source file for namespace and function definitions
+   (analyse-source-file \"example/src/example/core.clj\" {})
+   => '{example.core
+        {foo
+         {:source \"(defn foo\\n  [x]\\n  (println x \\\"Hello, World!\\\"))\"}}}"
+  {:added "0.1"}
   [file opts]
   (let [zloc (source/of-file file)
         nsp  (->  (query/$ zloc [(ns | _ & _)] {:walk :top})

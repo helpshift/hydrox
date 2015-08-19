@@ -27,6 +27,11 @@
     @folio))
 
 (defn analyse-test-file
+  "analyses a test file for docstring forms
+   (-> (analyse-test-file \"example/test/example/core_test.clj\" {})
+       (update-in '[example.core foo :docs] common/join-nodes))
+   => '{example.core {foo {:docs \"1\\n  => 1\", :meta {:added \"0.1\"}}}}"
+  {:added "0.1"}
   [file opts]
   (let [zloc   (source/of-file file)
         nsloc  (query/$ zloc [(ns | _ & _)] {:walk :top

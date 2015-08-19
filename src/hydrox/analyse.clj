@@ -11,10 +11,23 @@
    [[:documentation :paths] :doc]
    [[:test-paths]           :test]])
 
-(defn canonical [path]
+(defn canonical
+  "returns the canonical system path
+   
+   (canonical \"src\")
+   => (str (System/getProperty \"user.dir\") \"/src\")"
+  {:added "0.1"}
+  [path]
   (.getCanonicalPath (io/as-file path)))
 
-(defn file-type [project file]
+(defn file-type
+  "returns the file-type for a particular file
+ 
+   (file-type {:source-paths [\"src\"]
+               :test-paths   [\"test\"]} (io/file \"src/code.clj\"))
+   => :source"
+  {:added "0.1"}
+  [project file]
   (let [path (.getCanonicalPath file)]
     (or (->> access-paths
              (keep (fn [[v res]]
@@ -24,7 +37,25 @@
              (first))
         :ignore)))
 
-(defn add-file [folio file]
+(defn add-file
+  "adds a file to the folio
+   (-> {:project (hydrox/read-project (io/file \"example/project.clj\"))}
+       (add-file (io/file \"example/test/example/core_test.clj\"))
+       (add-file (io/file \"example/src/example/core.clj\"))
+       (dissoc :project))
+   => (contains-in
+       {:registry {(str user-dir \"/example/test/example/core_test.clj\")
+                   {'example.core
+                   {'foo {:docs vector?, :meta {:added \"0.1\"}}}},
+                   (str user-dir \"/example/src/example/core.clj\")
+                   {'example.core
+                    {'foo {:source \"(defn foo\\n  [x]\\n  (println x \\\"Hello, World!\\\"))\"}}}},
+        :references {'example.core
+                     {'foo {:docs vector?, :meta {:added \"0.1\"},
+                            :source \"(defn foo\\n  [x]\\n  (println x \\\"Hello, World!\\\"))\"}}},
+        :namespace-lu {'example.core (str user-dir \"/example/src/example/core.clj\")}})"
+  {:added "0.1"}
+  [folio file]
   (let [{:keys [project]} folio
         type (file-type project file)]
     (println "\nProcessing" file)
@@ -45,7 +76,17 @@
 
           :else folio)))
 
-(defn remove-file [folio file]
+(defn remove-file
+  "removes a file to the folio
+   (-> {:project (hydrox/read-project (io/file \"example/project.clj\"))}
+       (add-file (io/file \"example/src/example/core.clj\"))
+       (remove-file (io/file \"example/src/example/core.clj\"))
+       (dissoc :project))
+   => {:registry {}
+       :references {}
+       :namespace-lu {}}"
+  {:added "0.1"}
+  [folio file]
   (let [{:keys [project]} folio
         type (file-type project file)]
     (println "REMOVING (TODO)" type file)

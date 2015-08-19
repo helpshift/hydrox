@@ -15,17 +15,44 @@
       (z/->root-string))
   => "(+\n  1\n  2)")
 
+^{:refer hydrox.meta.util/has-quotes? :added "0.1"}
+(fact "checks if a string has quotes"
+
+  (has-quotes? "\"hello\"")
+  => true)
+
 ^{:refer hydrox.meta.util/strip-quotes :added "0.1"}
 (fact "gets rid of quotes in a string"
 
   (strip-quotes "\"hello\"")
   => "hello")
 
+^{:refer hydrox.meta.util/escape-newlines :added "0.1"}
+(fact "makes sure that newlines are printable"
+
+  (escape-newlines "\\n")
+  => "\\n")
+
+^{:refer hydrox.meta.util/escape-escapes :added "0.1"}
+(fact "makes sure that newlines are printable"
+
+  (escape-escapes "\\n")
+  => "\\\\n")
+
 ^{:refer hydrox.meta.util/escape-quotes :added "0.1"}
 (fact "makes sure that quotes are printable in string form"
 
   (escape-quotes "\"hello\"")
   => "\\\"hello\\\"")
+
+^{:refer hydrox.meta.util/strip-quotes-array :added "0.1"}
+(fact "utility that strips quotes when not the result of a fact"
+  (strip-quotes-array ["\"hello\""])
+  => ["hello"]
+  
+  (strip-quotes-array ["(str \"hello\")" " " "=>" " " "\"hello\""])
+  => ["(str \"hello\")" " " "=>" " " "\"hello\""])
+
 
 ^{:refer hydrox.meta.util/nodes->docstring :added "0.1"}
 (fact "converts nodes to a docstring compatible"
