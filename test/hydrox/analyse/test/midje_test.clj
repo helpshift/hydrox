@@ -13,4 +13,4 @@
       (gather-fact)
       :docs
       common/join-nodes)
-  => "Sample test program\n  (+ 1 1) => 2\n  (long? 3) => true")
+  => "\"Sample test program\"\n  (+ 1 1) => 2\n  (long? 3) => true")

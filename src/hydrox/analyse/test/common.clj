@@ -55,5 +55,4 @@
 (defn join-nodes [nodes]
   (->> nodes
        (map node/string)
-       ;;(map strip-quotes)
        (string/join)))

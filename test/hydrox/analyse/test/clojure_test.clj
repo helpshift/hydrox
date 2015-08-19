@@ -21,4 +21,4 @@
       (gather-deftest)
       :docs
       common/join-nodes)
-  => "Sample test program\n  1\n  => 1\n  (identical? 2 4)\n  => true")
+  => "\"Sample test program\"\n  1\n  => 1\n  (identical? 2 4)\n  => true")

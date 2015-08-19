@@ -31,7 +31,7 @@
        (gather-fact)
        :docs
        common/join-nodes)
-  => \"Sample test program\\n  (+ 1 1) => 2\\n  (long? 3) => true\""
+  => \"\"Sample test program\"\\n  (+ 1 1) => 2\\n  (long? 3) => true\""
   {:added "0.1"}
   [zloc]
   (if-let [mta (common/gather-meta zloc)]
