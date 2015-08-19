@@ -49,7 +49,7 @@ dive deeper into your code
 
 ## License
 
-Copyright © 2015 Chris Zheng
+Copyright © 2015 Helpshift
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
