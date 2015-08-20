@@ -89,6 +89,11 @@
         html           (render/replace-template template includes opts project)]
     (spit output-path html)))
 
+
+(defn copy-assets
+  [folio])
+
+
 (defn render-single
   "render for a single entry in the project.clj map"
   {:added "0.1"}

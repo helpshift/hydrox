@@ -4,6 +4,8 @@
 
 dive deeper into your code
 
+![hydrox logo](https://raw.githubusercontent.com/helpshift/hydrox/master/template/assets/img/big.png)
+
 ## Installation
 
 In your `project.clj`, add hydrox to the `[:profiles :dev :dependencies]` entry:  
