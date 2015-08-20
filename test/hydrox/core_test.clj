@@ -19,6 +19,9 @@
 ^{:refer hydrox.core/purge-docstring :added "0.1"}
 (fact "purges docstrings given a regulator")
 
+^{:refer hydrox.core/generate-docs :added "0.1"}
+(fact "generates html docs for :documentation entries in project.clj")
+
 ^{:refer hydrox.core/dive :added "0.1"}
 (fact "starts a dive")
 
@@ -31,6 +34,8 @@
     :log
     m
     (println m))
+
+  (import-docstring)
 
   (dive)
   (surface)

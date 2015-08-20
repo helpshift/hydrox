@@ -5,11 +5,9 @@
             [hara.component :as component]
             [clojure.java.io :as io]))
 
-(defonce ^:dynamic *running* #{})
-
 (defn read-project
   "like `leiningen.core.project/read` but with less features'
-   
+ 
    (keys (read-project (io/file \"example/project.clj\")))
    => (just [:description :license :name :source-paths :test-paths
              :documentation :root :url :version :dependencies] :in-any-order)"
@@ -44,7 +42,7 @@
 (defn import-docstring
   "imports docstrings given a regulator"
   {:added "0.1"}
-  ([] (mapv #(import-docstring % :all) *running*))
+  ([] (mapv #(import-docstring % :all) regulator/*running*))
   ([reg] (import-docstring reg :all))
   ([reg ns] (import-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
@@ -62,7 +60,7 @@
 (defn purge-docstring
   "purges docstrings given a regulator"
   {:added "0.1"}
-  ([] (mapv #(purge-docstring % :all) *running*))
+  ([] (mapv #(purge-docstring % :all) regulator/*running*))
   ([reg] (purge-docstring reg :all))
   ([reg ns] (purge-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
@@ -76,6 +74,15 @@
                (meta/purge-var file var)
                (meta/purge-file file)))))))
 
+(defn generate-docs
+  "generates html docs for :documentation entries in project.clj"
+  {:added "0.1"}
+  ([] (mapv generate-docs regulator/*running*))
+  ([{:keys [state] :as reg}]
+   (doc/render-all @state))
+  ([{:keys [state] :as reg} name]
+   (doc/render-single @state name)))
+
 (defn dive
   "starts a dive"
   {:added "0.1"}
@@ -86,7 +93,7 @@
 (defn surface
   "finishes a dive"
   {:added "0.1"}
-  ([] (doseq [reg *running*]
+  ([] (doseq [reg regulator/*running*]
         (surface reg)))
   ([regulator]
    (component/stop regulator)))

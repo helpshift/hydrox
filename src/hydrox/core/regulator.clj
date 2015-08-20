@@ -30,7 +30,6 @@
   (let [{:keys [source-paths test-paths]} project]
     (watch/add (io/as-file root) :hydrox
                (fn [_ _ _ [type file]]
-                 (println "FILE CHANGE DETECTED:" type file)
                  (case type
                    :create (swap! state analyser/add-file file)
                    :modify (swap! state analyser/add-file file)

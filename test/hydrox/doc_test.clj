@@ -13,11 +13,14 @@
 
 ^{:refer hydrox.doc/find-includes :added "0.1"}
 (fact "finds elements with `@=` tags"
-  
+
   (find-includes "<@=hello> <@=world>")
   => #{:hello :world})
 
 ^{:refer hydrox.doc/render-entry :added "0.1"}
+(fact "helper function that is called by both render-single and render-all")
+
+^{:refer hydrox.doc/render-single :added "0.1"}
 (fact "render for a single entry in the project.clj map")
 
 ^{:refer hydrox.doc/render-all :added "0.1"}

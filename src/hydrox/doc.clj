@@ -40,7 +40,7 @@
 
 (defn find-includes
   "finds elements with `@=` tags
-   
+ 
    (find-includes \"<@=hello> <@=world>\")
    => #{:hello :world}"
   {:added "0.1"}
@@ -71,12 +71,15 @@
                        includes)))))
 
 (defn render-entry
-  "render for a single entry in the project.clj map"
+  "helper function that is called by both render-single and render-all"
   {:added "0.1"}
   [name entry folio]
+  (println "Rendering" name)
   (let [project        (:project folio)
         opts           (:documentation project)
-        entry          (merge (util/filter-strings project) (-> opts :template :defaults) entry)
+        entry          (merge (util/filter-strings project)
+                              (-> opts :template :defaults)
+                              entry)
         template-path  (util/full-path (:template entry) (-> opts :template :path) project)
         output-path    (util/full-path (str name ".html") (:output opts) project)
         template       (slurp template-path)
@@ -86,11 +89,18 @@
         html           (render/replace-template template includes opts project)]
     (spit output-path html)))
 
+(defn render-single
+  "render for a single entry in the project.clj map"
+  {:added "0.1"}
+  [folio name]
+  (let [opts (-> folio :project :documentation)
+        entry (get-in opts [:files name])]
+    (render-entry name entry folio)))
+
 (defn render-all
   "render for all documentation entries in the project.clj map"
   {:added "0.1"}
   [folio]
   (let [opts (-> folio :project :documentation)]
     (doseq [[name entry] (:files opts)]
-      (println "Rendering" name)
       (render-entry name entry folio))))
