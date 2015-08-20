@@ -1,4 +1,4 @@
 [submodule "docs"]
 	path = docs
-	url = git@github.com:helpshift/hydrox.git
+	url = https://github.com/helpshift/hydrox.git
 	branch = gh-pages
