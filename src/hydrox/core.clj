@@ -39,7 +39,7 @@
                    (regulator/create-folio)
                    (regulator/init-folio))
          state (atom folio)]
-     (regulator state proj))))
+     (regulator/regulator state proj))))
 
 (defn import-docstring
   "imports docstrings given a regulator"
