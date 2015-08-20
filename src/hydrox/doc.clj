@@ -1,6 +1,7 @@
 (ns hydrox.doc
   (:require [rewrite-clj.zip :as source]
             [jai.query :as query]
+            [me.raynes.fs :as fs]
             [hydrox.common.util :as util]
             [hydrox.doc
              [collect :as collect]
@@ -40,7 +41,7 @@
 
 (defn find-includes
   "finds elements with `@=` tags
- 
+
    (find-includes \"<@=hello> <@=world>\")
    => #{:hello :world}"
   {:added "0.1"}
@@ -89,10 +90,14 @@
         html           (render/replace-template template includes opts project)]
     (spit output-path html)))
 
-
-(defn copy-assets
-  [folio])
-
+(defn copy-files
+  [folio]
+  (let [root     (-> folio :project :root)
+        path     (-> folio :project :documentation :template :path)
+        target   (str root "/" (-> folio :project :documentation :output))
+        sources  (-> folio :project :documentation :template :copy)]
+    (println target sources)
+    (mapv #(fs/copy-dir-into (str root "/" path "/" %) target) sources)))
 
 (defn render-single
   "render for a single entry in the project.clj map"
@@ -109,3 +114,28 @@
   (let [opts (-> folio :project :documentation)]
     (doseq [[name entry] (:files opts)]
       (render-entry name entry folio))))
+
+(comment
+  (copy-files
+   (-> hydrox.core.regulator/*running*
+       first :state
+       deref
+       ))
+
+  (fs/copy-dir )
+  
+  (dive)
+  (-> hydrox.core.regulator/*running*
+      first :project :root)
+  "/Users/chris/Development/helpshift/hydrox"
+  => "docs"
+  (-> hydrox.core.regulator/*running*
+      first :root)
+
+  (-> hydrox.core.regulator/*running*
+      first :project :documentation
+      :template :copy)
+  => ["assets/css" "assets/js" "assets/img"]
+
+
+  )

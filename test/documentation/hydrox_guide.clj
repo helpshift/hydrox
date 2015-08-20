@@ -3,15 +3,19 @@
 
 [[:chapter {:title "Introduction"}]]
 
-"[hydrox](https://www.github.com/helpshift/hydrox) is an in-repl tool which helps to enhance productivity around the entire program implementation process (design, development, testing and documentation). There are two main aspects of the tool that allow for this type of integrated workflow:
+"[hydrox](https://www.github.com/helpshift/hydrox) assists in the transmission of knowledge around a clojure project, providing in-repl management of documentation, docstrings and metadata through the reuse/repurposing of test code. Helping to create 'documentation that we can run', the tool allows for a design-orientated workflow for the programming process, blurring the boundaries between design, development, testing and documentation.
+
+There are two main aspects of the tool that allow for this type of integrated workflow:
 
 - management of function docstrings and metadata through tests
 - generation of html documentation from tests
 "
 
+[[:image {:src "https://raw.githubusercontent.com/helpshift/hydrox/master/template/assets/img/hydrox-overview.png"}]]
+
 [[:section {:title "Installation"}]]
 
-"In your project.clj, add hydrox to the [:profiles :dev :dependencies] entry:
+"In your project.clj, add hydrox to the `[:profiles :dev :dependencies]` entry:
 
 ```clojure
 (defproject ...
@@ -28,6 +32,7 @@
 (comment
   (use 'hydrox.core)
 
+  
   (dive)    ;; initialises the tool, and watches project for files changes
 
   (import-docstring) ;; imports docstrings into functions from test files
@@ -39,7 +44,9 @@
   (surface) ;; stops the tool
   )
 
-"A better experience can be obtained by using [vinyasa](https://github.com/zcaudate/vinyasa) and editing your `~/.lein/profiles.clj` to inject all hydrox vars into the `.` namespace:
+[[:section {:title "Injection"}]]
+
+"A better experience can be obtained by using [vinyasa](https://github.com/zcaudate/vinyasa) and editing your `~/.lein/profiles.clj` to inject all `hydrox` vars into the `.` namespace:
 
 ```clojure
 {:user 
@@ -48,7 +55,8 @@
                    [helpshift/hydrox \"{{PROJECT.version}}\"]]
     :injections 
     [(require '[vinyasa.inject :as inject])
-     (inject/in [hydrox.core dive surface single-use generate-docs import-docstring purge-docstring])]}}
+     (inject/in [hydrox.core dive surface single-use 
+                             generate-docs import-docstring purge-docstring])]}}
 ```
 "
 
@@ -57,6 +65,7 @@
 (comment
   (./dive)    ;; initialises the tool, and watches project for files changes
 
+  
   (./import-docstring) ;; imports docstrings into functions from test files
 
   (./purge-docstring)  ;; purges docstrings from functions
@@ -67,7 +76,60 @@
   )
 
 [[:section {:title "Motivation"}]]
+"The precessor of [hydrox](https://github.com/helpshift/hydrox) was [midje-doc](https://github.com/zcaudate/lein-midje-doc), and it provided very much the same functionalities as the current `hydrox` implementation. Whilst [midje-doc](https://github.com/zcaudate/lein-midje-doc) was built primarily as a leiningen plugin, it was found that the tool was more effective for the development when used within the repl.
+
+There are significant improvements of [hydrox](https://github.com/helpshift/hydrox) over [midje-doc](https://github.com/zcaudate/lein-midje-doc) including:
+
+- Declarative source code traversal using [jai](https://www.github.com/zcaudate/jai)
+- Extensible micropass pipeline for compilation and linking
+- Customisable templates system for html documentataion
+- Code-diffing mechanism for efficient management of filesystem changes
+"
+
+[[:section {:title "Literate Programming"}]]
+
+"
+The phrase 'Literate Programming' has been bandied around alot lately. The main idea is that the code is written in a way that allows both a machine *and* a person to understand what is going on. Most seem to agree that it is a great idea. The reuse factor of not writing seperate documentation alone brings great excitement to many developers. However, we must understand that the methods of effective communication to humans and machines are very different:
+
+- Communication to Machines are usually linear and based on a specific set of instructions. First Do This, Then Do That.... Machines don't really care what the code does. It just executes whatever code it has been given. The main importance of establishing that a program is correct is to give it a set of verifible `input`/`output` responses and see if it behaves a certain way.
+
+- Communication to Humans are usually less procedural and more relational. We wish to be engaged, inspired and taught, not given a sequence of instructions that each break down to even smaller sequences. The best documentation are usally seperated into logical sections like an `overview`, `table of contents`, `list of figures`, `topic chapters`, `subsections`. There are `text`, `code`, `pictures`, even `sound` and `video`. Documentation structure resemble trees, with links between content that connect related topics and content. They do not resemble program code and therefore should be created independently of the machine code itself.
+"
+
+[[:section {:title "Facillitating Communication"}]]
+
+"
+The primary reason for building `hydrox` was to simplify the communication process across a clojure project. In general, the programming process can be seen as a set of different communication types with the developer acting as the facillitator for the following:
+
+1. with the machine telling it what to do (code)
+- with the machine, verifying that it has done it's job (unit and integration tests)
+- with themselves/other developers, telling them how to use the function (unit tests and docstrings)
+- with the end user, telling them how to do it (design/integration documentation)
+
+Notice that with the 4 points listed, there happens to be some overlap between 2 and 3 (unit tests) as well as 2 and 4 (integration). We can categorise the overlap as follows:
+
+- unit/function level documentation (intended for communicating with a machine/developer)
+- design/integration level documentation (intended for communicating with a consumer)
+
+The effective communication for each of these is very different and should be seperately managed.
+"
+
+[[:section {:title "Functional Level Documentation"}]]
+
+
+
+
+[[:section {:title "Design Level Documentation"}]]
+
 ""
+
+
+
+"The best for of "
+
+
+
+
 
 [[{:tag "qs-project" :title "project.clj"}]]
 (comment
@@ -85,6 +147,7 @@
     ...))
 
 [[{:tag "qs-first-doc" :title "test/docs/my_first_document.clj"}]]
+
 (comment
   (ns docs.my-first-document
     (:require [midje.sweet :refer :all]))
@@ -117,18 +180,6 @@
 
 [[:chapter {:title "Programming vs Documentation"}]]
 
-"
-The phrase 'Literate Programming' has been very popular lately. The main idea is that the code is written in a way that allows both a machine *and* a person to understand what is going on. Most people seem to agree that it is a great idea.
-
-However Humans and machines are fundamentally different and rely on completely different methods of communication:
-
-- Communication to Machines are usually very linear and procedural. It involves giving them a specific set of instructions. First Do This, Then Do That.... Machines don't really care what the code does. It just executes whatever code it has been given.
-
-
-- Communication to Humans usually take a very different form. We wish to be engaged, inspired and taught, not given a sequence of instructions that each break down to even smaller sequences. The best documentation are usally seperated into logical sections like an `overview`, `table of contents`, `list of figures`, `topic chapters`, `subsections`. There are `text`, `code`, `pictures`, even `sound` and `video`. Documentation structure resemble trees, with links between content that connect related topics and content. They do not resemble program code and therefore should be created independently of the machine code itself.
-
-**In short:** Machines are programmed while humans are engaged, inspired and taught. *Programs* are written linearly for machines. *Documentation* are written like a woven lattice for humans. The fundamental structure of programs and documentation are very different from each other. Therefore, thinking that documentation can be automatically generated from doc-strings is a **mechanistic** approach not a **humanistic** one. Documents should be written for people, not machines. Our tools for documentation should reflect this as well.
-"
 
 [[:chapter {:title "Tooling for Documents"}]]
 

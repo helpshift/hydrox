@@ -9,7 +9,7 @@
                  [hiccup "1.0.5"]
                  [markdown-clj "0.9.66"]
                  [stencil "0.3.5"]
-                 [me.raynes/conch "0.8.0"]]
+                 [me.raynes/fs "1.4.6"]]
   :documentation {:site   "hydrox"
                   :output "docs"
                   :description "dive deeper into your code"
@@ -18,7 +18,7 @@
                             :email   "chris@helpshift.com"
                             :website "http://www.helpshift.com"}]
                   :template {:path "template"
-                             :copy ["assets/css" "assets/js" "assets/img"]
+                             :copy ["assets"]
                              :defaults {:template     "article.html"
                                         :navbar       [:file "partials/navbar.html"]
                                         :dependencies [:file "partials/deps-web.html"]
