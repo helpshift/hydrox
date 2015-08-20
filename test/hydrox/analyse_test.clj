@@ -16,12 +16,12 @@
 
 ^{:refer hydrox.analyse/canonical :added "0.1"}
 (fact "returns the canonical system path"
-  
+
   (canonical "src")
   => (str (System/getProperty "user.dir") "/src"))
 
 ^{:refer hydrox.analyse/file-type :added "0.1"}
-(fact "returns the file-type for a particular file"
+(fact "returns the file-type for entries"
 
   (file-type {:source-paths ["src"]
               :test-paths   ["test"]} (io/file "src/code.clj"))

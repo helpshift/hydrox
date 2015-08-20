@@ -11,9 +11,15 @@
             [clojure.java.io :as io])
   (:refer-clojure :exclude [import]))
 
-(def ^:dynamic *running* #{})
+(defonce ^:dynamic *running* #{})
 
 (defn read-project
+  "like `leiningen.core.project/read` but with less features'
+   
+   (keys (read-project (io/file \"example/project.clj\")))
+   => (just [:description :license :name :source-paths :test-paths
+             :documentation :root :url :version :dependencies] :in-any-order)"
+  {:added "0.1"}
   ([] (read-project (io/file "project.clj")))
   ([file]
    (let [path  (.getCanonicalPath file)
@@ -29,7 +35,10 @@
          (update-in [:source-paths] (fnil identity ["src"]))
          (update-in [:test-paths] (fnil identity ["test"]))))))
 
-(defn create-folio [{:keys [root] :as project}]
+(defn create-folio
+  "creates the folio for storing all the documentation information"
+  {:added "0.1"}
+  [{:keys [root] :as project}]
   (data/folio {:meta        {}
                :articles    {}
                :namespaces  {}
@@ -38,24 +47,33 @@
                :registry    (data/registry)
                :root        root}))
 
-(defn mount-folio [state {:keys [project root] :as folio}]
+(defn mount-folio
+  "adds a watcher to update function/test definitions when files in the project changes"
+  {:added "0.1"}
+  [state {:keys [project root] :as folio}]
   (let [{:keys [source-paths test-paths]} project]
     (watch/add (io/as-file root) :hydrox
                (fn [_ _ _ [type file]]
+                 (println "FILE CHANGE DETECTED:" type file)
                  (case type
                    :create (swap! state analyser/add-file file)
                    :modify (swap! state analyser/add-file file)
                    :delete (swap! state analyser/remove-file file)))
                {:filter  [".clj"]
-                :include (->> (concat source-paths test-paths)
-                              (map #(str root "/" %)))
-                :async true})
+                :recursive true
+                :include (concat source-paths test-paths)})
     folio))
 
-(defn unmount-folio [folio]
-  (watch/remove (io/as-file (:root folio)) :documentation))
+(defn unmount-folio
+  "removes the file-change watcher"
+  {:added "0.1"}
+  [folio]
+  (watch/remove (io/as-file (:root folio)) :hydrox))
 
-(defn init-folio [{:keys [project] :as folio}]
+(defn init-folio
+  "runs through all the files and adds function/test definitions to the project"
+  {:added "0.1"}
+  [{:keys [project] :as folio}]
   (reduce (fn [folio file]
             (analyser/add-file folio file))
           folio
@@ -63,6 +81,8 @@
                   (util/all-files project :test-paths ".clj"))))
 
 (defn start-regulator
+  "starts the regulator"
+  {:added "0.1"}
   [{:keys [project state] :as obj}]
   (let [folio (-> (create-folio project)
                   (init-folio))]
@@ -73,6 +93,8 @@
     obj))
 
 (defn stop-regulator
+  "stops the regulator"
+  {:added "0.1"}
   [{:keys [project state] :as obj}]
   (unmount-folio @state)
   (reset! state nil)
@@ -90,6 +112,8 @@
     (nil? @state)))
 
 (defn regulator
+  "creates a blank regulator, does not work"
+  {:added "0.1"}
   ([]
    (regulator (read-project)))
   ([project]
@@ -97,7 +121,9 @@
   ([state project]
    (Regulator. state project)))
 
-(defn once-off
+(defn create-regulator
+  "returns a working regulator for a given project file"
+  {:added "0.1"}
   [path]
   (let [proj  (read-project (io/file path))
         folio (-> proj
@@ -107,14 +133,16 @@
     (regulator state proj)))
 
 (defn import-docstring
-  ([] )
+  "imports docstrings given a regulator"
+  {:added "0.1"}
+  ([] (mapv #(import-docstring % :all) *running*))
   ([reg] (import-docstring reg :all))
   ([reg ns] (import-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
    (let [{:keys [references]
           lu :namespace-lu} @state]
      (cond (= ns :all)
-           (meta/import-project project references)
+           (doall (meta/import-project project references))
 
            :else
            (if-let [file (get lu ns)]
@@ -122,17 +150,16 @@
                (meta/import-var file var references)
                (meta/import-file file references)))))))
 
-(defn import [& args]
-  (doseq [reg *running*]
-    (apply import-docstring reg args)))
-
 (defn purge-docstring
+  "purges docstrings given a regulator"
+  {:added "0.1"}
+  ([] (mapv #(purge-docstring % :all) *running*))
   ([reg] (purge-docstring reg :all))
   ([reg ns] (purge-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
    (let [{lu :namespace-lu} @state]
      (cond (= ns :all)
-           (meta/purge-project project)
+           (doall (meta/purge-project project))
 
            :else
            (if-let [file (get lu ns)]
@@ -140,35 +167,17 @@
                (meta/purge-var file var)
                (meta/purge-file file)))))))
 
-(defn purge [& args]
-  (doseq [reg *running*]
-    (apply purge-docstring reg args)))
+(defn dive
+  "starts a dive"
+  {:added "0.1"}
+  ([] (dive "project.clj"))
+  ([path]
+   (component/start (regulator (read-project (io/file path))))))
 
-(comment
-  (component/start (regulator (read-project (io/file "../hara/project.clj"))))
-
-  (def reg (let [proj  (read-project)
-                 folio (-> proj
-                           (create-folio)
-                           (init-folio))
-                 state (atom folio)]
-             (Regulator. state proj)))
-
-  (def reg (let [proj  (read-project)
-                 folio (-> proj
-                           (create-folio)
-                           (analyser/add-file (io/file "src/hydrox/analyser/test.clj"))
-                           (analyser/add-file (io/file "test/hydrox/analyser/test_test.clj")))
-                 state (atom folio)]
-             (Regulator. state proj)))
-
-  (:references @(:state reg))
-
-  (import-docstring (once-off "project.clj"))
-
-  (import-docstring reg 'hydrox.doc.structure)
-  (purge-docstring reg 'hydrox.analyse.test)
-
-  @(:state reg)
-  (:project reg)
-  (.getParent(io/file "project.clj")))
+(defn surface
+  "finishes a dive"
+  {:added "0.1"}
+  ([] (doseq [reg *running*]
+        (surface reg)))
+  ([regulator]
+   (component/stop regulator)))

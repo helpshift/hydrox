@@ -13,7 +13,7 @@
 
 (defn canonical
   "returns the canonical system path
-   
+ 
    (canonical \"src\")
    => (str (System/getProperty \"user.dir\") \"/src\")"
   {:added "0.1"}
@@ -21,7 +21,7 @@
   (.getCanonicalPath (io/as-file path)))
 
 (defn file-type
-  "returns the file-type for a particular file
+  "returns the file-type for entries
  
    (file-type {:source-paths [\"src\"]
                :test-paths   [\"test\"]} (io/file \"src/code.clj\"))

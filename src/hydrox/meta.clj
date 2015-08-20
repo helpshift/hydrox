@@ -28,46 +28,53 @@
                                {:walk :top}))]
     (util/write-to-file zloc file)))
 
-(defn import-fn [nsp references]
+(defn import-fn
+  "helper function for file import"
+  {:added "0.1"}
+  [nsp references]
   (fn [zloc]
     (util/import-location zloc nsp references)))
 
 (defn import-var
+  "import docs for a single var"
+  {:added "0.1"}
   [file var references]
   (edit-file file var references import-fn))
 
 (defn import-file
+  "import docs for a file"
+  {:added "0.1"}
   [file references]
   (edit-file file nil references import-fn))
 
-(defn import-project [project references]
+(defn import-project
+  "import docs for the entire project"
+  {:added "0.1"}
+  [project references]
   (for [file (util/all-files project :source-paths ".clj")]
     (import-file file references)))
 
-(defn purge-fn [nsp references]
+(defn purge-fn
+  "helper function for file purge"
+  {:added "0.1"}
+  [nsp references]
   identity)
 
 (defn purge-var
+  "purge docs for a single var"
+  {:added "0.1"}
   [file var]
   (edit-file file var nil purge-fn))
 
-(defn purge-file [file]
+(defn purge-file
+  "purge docs for a file"
+  {:added "0.1"}
+  [file]
   (edit-file file nil nil purge-fn))
 
-(defn purge-project [project]
+(defn purge-project
+  "purge docs for the entire project"
+  {:added "0.1"}
+  [project]
   (for [file (util/all-files project :source-paths ".clj")]
     (purge-file file)))
-
-(comment
-
-  (purge-file "src/hydrox/code.clj")
-
-  (import-file "src/hydrox/code.clj"
-               {'hydrox.meta {'import-var {:docs [(node/string-node "Hello there")]
-                                           :meta {:added "0.1"}}}})
-  (import-var "src/hydrox/code.clj"
-              'import-var
-              {'hydrox.meta {'import-var {:docs [(node/string-node "Hello there")]
-                                          :meta {:added "0.1"}}}})
-
-  (def z (source/of-file "src/hydrox/code.clj")))
