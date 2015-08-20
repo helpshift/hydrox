@@ -5,33 +5,12 @@
 
 ^{:refer hydrox.core/read-project :added "0.1"}
 (fact "like `leiningen.core.project/read` but with less features'"
-  
+
   (keys (read-project (io/file "example/project.clj")))
   => (just [:description :license :name :source-paths :test-paths
             :documentation :root :url :version :dependencies] :in-any-order))
 
-^{:refer hydrox.core/create-folio :added "0.1"}
-(fact "creates the folio for storing all the documentation information")
-
-^{:refer hydrox.core/mount-folio :added "0.1"}
-(fact "adds a watcher to update function/test definitions when files in the project changes")
-
-^{:refer hydrox.core/unmount-folio :added "0.1"}
-(fact "removes the file-change watcher")
-
-^{:refer hydrox.core/init-folio :added "0.1"}
-(fact "runs through all the files and adds function/test definitions to the project")
-
-^{:refer hydrox.core/start-regulator :added "0.1"}
-(fact "starts the regulator")
-
-^{:refer hydrox.core/stop-regulator :added "0.1"}
-(fact "stops the regulator")
-
-^{:refer hydrox.core/regulator :added "0.1"}
-(fact "creates a blank regulator, does not work")
-
-^{:refer hydrox.core/create-regulator :added "0.1"}
+^{:refer hydrox.core/single-use :added "0.1"}
 (fact "returns a working regulator for a given project file")
 
 ^{:refer hydrox.core/import-docstring :added "0.1"}
@@ -46,6 +25,29 @@
 ^{:refer hydrox.core/surface :added "0.1"}
 (fact "finishes a dive")
 
+
+(comment
+  (event/deflistener log-listener
+    :log
+    m
+    (println m))
+
+  (dive)
+  (surface)
+  (purge-docstring)
+  (import-docstring)
+  *running*
+  (watch/add (io/file (:root (read-project))) :small
+             (fn [_ _ _ v]
+               (println v)))
+  oeu
+  (watch/list (io/file (:root (read-project))))
+  (watch/remove (io/file (:root (read-project))) :hydrox)
+  (doseq [reg *running*]
+    (println reg)
+    (import-docstring reg :all))
+  (mapv #(import-docstring % :all) *running*)
+  )
 
 (comment
   (component/start (regulator (read-project (io/file "../hara/project.clj"))))
