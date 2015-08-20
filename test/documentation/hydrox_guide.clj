@@ -1,53 +1,73 @@
 (ns documentation.hydrox-guide
   (:require [midje.sweet :refer :all]))
 
-[[:chapter {:title "Quickstart"}]]
+[[:chapter {:title "Introduction"}]]
 
-"`lein-midje-doc` can be used to generate documents with code examples from `midje` test files. For motivation, see [chapter {{programming-vs-documentation}}](#programming-vs-documentation) and [chapter  {{tooling-for-documents}}](#tooling-for-documents). For api descriptions, see [chapter {{api-reference}}](#api-reference).
-[`lein-midje-doc`](https://www.github.com/zcaudate/lein-midje-doc) has been used to generate its own documention. The source can be found [here](https://github.com/zcaudate/lein-midje-doc/blob/master/test/midje_doc/midje_doc_guide.clj)."
+"[hydrox](https://www.github.com/helpshift/hydrox) is an in-repl tool which helps to enhance productivity around the entire program implementation process (design, development, testing and documentation). There are two main aspects of the tool that allow for this type of integrated workflow:
 
-[[:section {:title "Syntax Highlighting"}]]
-"For syntax hightlighting of code examples, the pygments python package should be installed. Make sure that the directory containing `pygmentize` is in your `PATH` settings."
-
-[[:section {:title "Generating from Source"}]]
-" The html documentation can be generated after downloading the project:
+- management of function docstrings and metadata through tests
+- generation of html documentation from tests
 "
-
-[[{:lang "bash" :numbered false}]]
-[[:code
-"
-> git clone https://github.com/zcaudate/lein-midje-doc.git
-> cd lein-midje-doc
-> lein midje-doc once
-> open ./index.html
-"]]
 
 [[:section {:title "Installation"}]]
 
-"`lein-midje-doc` is a leiningen plugin. Install by adding entries in `~/.lein/profiles.clj`:
+"In your project.clj, add hydrox to the [:profiles :dev :dependencies] entry:
 
-     {:user {:plugins ...
-             [lein-midje-doc \"{{PROJECT.version}}\"]
-             [lein-midje     \"3.0.1\"]
-             ...}}
+```clojure
+(defproject ...
+    ...
+    :profiles {:dev {:dependencies [...
+                                    [helpshift/hydrox \"{{PROJECT.version}}\"]
+                                    ...]}}
+    ...)
+```
 "
 
+"All functionality is the `hydrox.core` namespace:"
 
-[[:section {:title "Usage"}]]
+(comment
+  (use 'hydrox.core)
 
+  (dive)    ;; initialises the tool, and watches project for files changes
+
+  (import-docstring) ;; imports docstrings into functions from test files
+
+  (purge-docstring)  ;; purges docstrings from functions
+
+  (generate-docs)    ;; generates html (like this one) from test files
+
+  (surface) ;; stops the tool
+  )
+
+"A better experience can be obtained by using [vinyasa](https://github.com/zcaudate/vinyasa) and editing your `~/.lein/profiles.clj` to inject all hydrox vars into the `.` namespace:
+
+```clojure
+{:user 
+   {:plugins [...]        
+    :dependencies [[im.chit/vinyasa.inject \"0.3.4\"]
+                   [helpshift/hydrox \"{{PROJECT.version}}\"]]
+    :injections 
+    [(require '[vinyasa.inject :as inject])
+     (inject/in [hydrox.core dive surface single-use generate-docs import-docstring purge-docstring])]}}
+```
 "
-1. Start with a new or existing project.
-1. In `project.clj` make sure that `midje` is in the dependencies and place a `:documentation` entry in the `defproject` form ([e.{{qs-project}}](#qs-project)).
 
-1. Create a file in `test/docs/my_first_document.clj` ([e.{{qs-first-doc}}](#qs-first-doc)).
+"Functions can then be used like this within the repl:"
 
-1. Run `lein midje-doc` in a terminal within your project folder.
+(comment
+  (./dive)    ;; initialises the tool, and watches project for files changes
 
-1. The output documentation should be generated within the project directory as `/my-first-document.html`. An example of how this should look can be seen [here](http://z.caudate.me/lein-midje-doc/my-first-document.html)
+  (./import-docstring) ;; imports docstrings into functions from test files
 
-1. Run `lein midje :autotest` in another terminal window. This will ensure that the documentation is correct.
+  (./purge-docstring)  ;; purges docstrings from functions
 
-1. Use `live-reload` for the best experience of live documenting"
+  (./generate-docs)    ;; generates html (like this one) from test files
+
+  (./surface) ;; stops the tool
+  )
+
+[[:section {:title "Motivation"}]]
+""
 
 [[{:tag "qs-project" :title "project.clj"}]]
 (comment

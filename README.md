@@ -11,16 +11,19 @@ dive deeper into your code
 In your `project.clj`, add hydrox to the `[:profiles :dev :dependencies]` entry:  
 
 ```clojure
-:profiles {:dev {:dependencies [...
-                                [helpshift/hydrox "0.1.0"]
-                                ...]}}
+(defproject ...
+  ...
+  :profiles {:dev {:dependencies [...
+                                  [helpshift/hydrox "0.1.0"]
+                                  ...]}}
+  ...)
 ```
 
 ## Usage
 
-[hydrox](https://www.github.com/helpshift/hydrox) allows in-repl management of documentation, doc-string and function metadata to allow for an integrated workflow for design, development and documentation.
+[hydrox](https://www.github.com/helpshift/hydrox) provides in-repl management of documentation, doc-string and function metadata, allowing for a design-orientated workflow for the programming process, blurring the boundaries between design, development, testing and documentation.
 
-Please see the [documentation](http://helpshift.github.io/hydrox) for more information.
+Please see the [docs](http://helpshift.github.io/hydrox) for more information.
 
 ## License
 
