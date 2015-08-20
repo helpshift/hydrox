@@ -12,4 +12,4 @@ pom.xml.asc
 *.*#
 .#*
 .DS_folio
-*.html
+./*.html

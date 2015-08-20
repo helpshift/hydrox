@@ -4,48 +4,21 @@
 
 dive deeper into your code
 
+## Installation
+
+In your `project.clj`, add hydrox to the `[:profiles :dev :dependencies]` entry:  
+
+```clojure
+:profiles {:dev {:dependencies [...
+                                [helpshift/hydrox "0.1.0"]
+                                ...]}}
+```
+
 ## Usage
 
-  this is just a brain dump of the functionality that will be availibale for hydrox
+[hydrox](https://www.github.com/helpshift/hydrox) allows in-repl management of documentation, doc-string and function metadata to allow for an integrated workflow for design, development and documentation.
 
-  - so the first functionality will be being able to watch a project for changes
-
-  - The second is to be able to take these changes and then put them into some sort of a dynamic database-backed storage mechanism using datomic/adi
-
-  - The third is to be able to use the database to generate code
-
-  - Create a .hydrox directory
-              - meta.edn
-              - <project>.datomic
-
-
-  - Import the saved git versions of the project and to be able to generate versions
-  - Every save creates a version that is attached to the current git sha of the project for amendments
-
-
-  API
-
-  (./hydrox)
-  - updates git logs
-  - updates git
-
-  ;; basically creates everything from the project file
-
-  (./doc-import :all)
-  (./doc-import <ns>)
-  (./doc-import <ns/var>)
-  (./doc-import <file>)
-
-  (./doc-purge  :all)
-  (./doc-purge  <file>)
-  (./doc-purge  <ns>)
-  (./doc-purge  <ns/var>)
-
-  (./doc-source <ns/var> <version>)
-  (./doc-test   hydrox.core/query "0.2.1")
-
-  (./doc-gen)
-  (./doc-gen "0.3.1") for a particular version)
+Please see the [documentation](http://helpshift.github.io/hydrox) for more information.
 
 ## License
 
