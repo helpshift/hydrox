@@ -25,7 +25,13 @@ In your `project.clj`, add hydrox to the `[:profiles :dev :dependencies]` entry:
 
 ![hydrox overview](https://raw.githubusercontent.com/helpshift/hydrox/master/template/assets/img/hydrox-overview.png)
 
-Please see the [docs](http://helpshift.github.io/hydrox) for more information.
+Please see the [docs](http://helpshift.github.io/hydrox) for more information (generated using itself).
+
+## Links and References:
+
+- the website for [hara](https://www.github.com/zcaudate/hara) has been generated using [hydrox](https://www.github.com/helpshift/hydrox)
+
+- the (output)[http://helpshift.github.io/hydrox/sample-document.html] can be seen for a sample [input](https://github.com/helpshift/hydrox/blob/master/test/documentation/sample_document.clj)
 
 ## License
 
