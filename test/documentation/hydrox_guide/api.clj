@@ -251,4 +251,57 @@ Documentation examples put in `facts` forms allows the code to be verified for c
   (in-ns 'hello.world)
   (use 'clojure.string)
   (split "Hello World" #"\s") ;=> ["Hello" "World"]
-)
+  )
+
+
+[[:subsection {:title ":code"}]]
+"The most generic way of displaying code is with the `:code` tag. It is useful when code in other languages are required to be in the documentation."
+
+[[:subsubsection {:title "Python Example"}]]
+
+"The source and outputs are listed below:"
+
+[[{:title "Python for Loop Source" :tag "c-py-src"}]]
+(comment
+  [[:code {:lang "python" :title "Python for Loop" :tag "c-py-1"}
+  "
+  myList = [1,2,3,4]
+  for index in range(len(myList)):
+    myList[index] += 1
+  print myList"]])
+
+[[:code {:lang "python" :title "Python for Loop" :tag "c-py-1"}
+"
+myList = [1,2,3,4]
+for index in range(len(myList)):
+  myList[index] += 1
+print myList
+"]]
+
+[[:subsubsection {:title "Ruby Example"}]]
+
+"The source and outputs are listed below:"
+
+[[{:title "Ruby for Loop Source" :tag "c-rb-src"}]]
+(comment
+  [[:code {:lang "ruby" :title "Ruby for Loop" :tag "c-rb-2"}
+  "
+  array.each_with_index do |element,index|
+    element.do_stuff(index)
+  end"]])
+
+[[:code {:lang "ruby" :title "Ruby for Loop" :tag "c-rb-2"}
+"
+array.each_with_index do |element,index|
+  element.do_stuff(index)
+end
+"
+  ]]
+
+[[:reference {:mode :source :refer hydrox.core/dive}]]
+
+[[:reference {:mode :docs :refer hydrox.doc.parse/code-form}]]
+
+;;[[:namespace {:name "hydrox.core"}]]
+
+

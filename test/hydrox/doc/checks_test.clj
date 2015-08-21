@@ -19,6 +19,15 @@
       attribute?)
   => true)
 
+^{:refer hydrox.doc.checks/code-directive? :added "0.1"}
+(fact "checks if the element is a code directive"
+
+  (-> "[[:code {:type :javascript} 
+         \"1 + 1 == 2\"]]"
+      z/of-string
+      code-directive?)
+  => true)
+
 ^{:refer hydrox.doc.checks/ns? :added "0.1"}
 (fact "checks if the element is a ns form"
 

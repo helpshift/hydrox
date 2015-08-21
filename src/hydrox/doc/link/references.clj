@@ -1,5 +1,6 @@
 (ns hydrox.doc.link.references
   (:require [hara.data.nested :as nested]
+            [hydrox.meta.util :as util]
             [rewrite-clj.node :as node]
             [clojure.string :as string]))
 
@@ -15,10 +16,17 @@
   {:added "0.1"}
   [docs]
   (->> docs
-       (filter (fn [x] (and (not (node/whitespace? x))
+       #_(filter (fn [x] (and (not (node/whitespace? x))
                             (not (string? (node/value x))))))
-       (map node/string)
-       (string/join "\n")))
+       (map (fn [node]
+              (let [res (node/string node)]
+                (cond (and (not (node/whitespace? node))
+                           (string? (node/value node)))
+                      (util/escape-newlines res)
+
+                      :else res))))
+       (string/join)
+       ))
 
 (defn link-references
   "link code for elements to references
@@ -45,11 +53,10 @@
                                nsp (symbol (.getNamespace refer))
                                var (symbol (.getName refer))
                                mode (or mode :source)
+                               code (get-in references [nsp var mode])
                                code (case mode
-                                      :source (get-in references [nsp var mode])
-                                      :docs   (-> (get-in references [nsp var mode])
-                                                  (process-doc-nodes)))]
-                           
+                                      :source code
+                                      :docs   (process-doc-nodes code))]
                            (assoc element
                                   :type :code
                                   :origin :reference

@@ -1,6 +1,8 @@
 (ns hydrox.doc.render.article
   (:require [hydrox.doc.render.util :as util]
-            [hydrox.doc.structure :as structure]))
+            [hydrox.doc.structure :as structure]
+            [rewrite-clj.node :as node]
+            [clojure.string :as string]))
 
 (defmulti render (fn [element folio] (:type element)))
 
@@ -61,8 +63,8 @@
 
 (defmethod render
   :code
-  [{:keys [tag text code indentation] :as element} folio]
-  [:div {:class :code :hljs :hljs :no-escape :no-escape :language :clojure}
+  [{:keys [tag text code indentation lang] :as element} folio]
+  [:div {:class :code :hljs :hljs :no-escape :no-escape :language (or lang :clojure)}
    (-> code
        (util/join)
        (util/basic-html-escape)
@@ -83,3 +85,19 @@
    (if number
      [:h4 [:i (str "fig." number
                    (if title (str "  &nbsp;-&nbsp; " title)))]])])
+
+(defmethod render
+  :namespace
+  [{:keys [mode] :as element} folio])
+
+(comment
+  (render
+   {:type :reference :mode :docs :refer 'hydrox.doc.parse/parse-ns-form}
+   (-> hydrox.core.regulator/*running*
+              first
+              :state
+              deref))
+
+  (hydrox.core/generate-docs)
+  
+  )

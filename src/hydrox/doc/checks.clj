@@ -40,6 +40,10 @@
   [zloc]
   ((wrap-meta query/match) zloc {:pattern [[#'map?]]}))
 
+(defn code-directive?
+  [zloc]
+  ((wrap-meta query/match) zloc {:pattern [[:code #'map? #'string?]]}))
+
 (defn ns?
   "checks if the element is a ns form
  

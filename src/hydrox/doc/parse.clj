@@ -105,7 +105,31 @@
   (let [attributes (-> zloc source/down source/down source/sexpr)]
     (assoc attributes :type :attribute)))
 
-(defn parse-whitespace [zloc]
+(defn parse-code-directive
+  "coverts an code directive zipper into an element
+   (-> (z/of-string \"[[:code {:language :ruby} \\\"1 + 1 == 2\\\"]]\")
+       (parse-code-directive))
+   => {:type :block, :indentation 0 :code \"1 + 1 == 2\" :language :ruby}"
+  {:added "0.1"}
+  [zloc]
+  (-> (parse-directive zloc)
+      (assoc :type :block
+             :indentation *indentation*
+             :code (-> zloc
+                       source/down
+                       source/down
+                       source/right
+                       source/right
+                       source/sexpr))))
+
+(defn parse-whitespace
+  "coverts a whitespace zipper into an element
+   (-> (z/of-string \"1 2 3\")
+       (z/right*)
+       (parse-whitespace))
+   => {:type :whitespace, :code [\" \"]}"
+  {:added "0.1"}
+  [zloc]
   {:type :whitespace
    :code [(node/string (source/node zloc))]})
 
@@ -148,15 +172,20 @@
         (checks/attribute? zloc)
         ((wrap-meta parse-attribute) zloc)
 
+        (checks/code-directive? zloc)
+        ((wrap-meta parse-code-directive) zloc)
+
         (checks/paragraph? zloc)
         (parse-paragraph zloc)
 
         :else (parse-code zloc)))
 
-(defn append-code [current new]
+(defn append-code
+  [current new]
   (update-in current [:code] #(apply conj % (:code new))))
 
-(defn merge-current [output current]
+(defn merge-current
+  [output current]
   (cond (nil? current) output
 
         (= :whitespace (:type current)) output
@@ -209,7 +238,8 @@
                                         (apply conj (merge-current output current) sub)))
                    (recur (source/right* zloc) opts element (merge-current output current))))))))
 
-(defn parse-file [file opts]
+(defn parse-file
+  [file opts]
   ;; For developement purposes
   (parse-loop (source/of-file (str (:root opts) "/" file)) opts))
 

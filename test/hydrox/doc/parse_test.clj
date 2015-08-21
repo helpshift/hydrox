@@ -27,7 +27,6 @@
       (parse-fact-form))
   => {:type :block :indentation 2 :code "(+ 1 1) \n => 2"})
 
-
 ^{:refer hydrox.doc.parse/parse-comment-form :added "0.1"}
 (fact "convert a comment zipper into an element"
 
@@ -57,6 +56,19 @@
   (-> (z/of-string "[[{:title \"hello world\"}]]")
       (parse-attribute))
   => {:type :attribute, :title "hello world"})
+
+^{:refer hydrox.doc.parse/parse-code-directive :added "0.1"}
+(fact "coverts an code directive zipper into an element"
+  (-> (z/of-string "[[:code {:language :ruby} \"1 + 1 == 2\"]]")
+      (parse-code-directive))
+  => {:type :block, :indentation 0 :code "1 + 1 == 2" :language :ruby})
+
+^{:refer hydrox.doc.parse/parse-whitespace :added "0.1"}
+(fact "coverts a whitespace zipper into an element"
+  (-> (z/of-string "1 2 3")
+      (z/right*)
+      (parse-whitespace))
+  => {:type :whitespace, :code [" "]})
 
 ^{:refer hydrox.doc.parse/parse-code :added "0.1"}
 (fact "coverts a code zipper into an element"
