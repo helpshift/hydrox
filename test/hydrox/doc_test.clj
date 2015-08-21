@@ -20,6 +20,9 @@
 ^{:refer hydrox.doc/render-entry :added "0.1"}
 (fact "helper function that is called by both render-single and render-all")
 
+^{:refer hydrox.doc/copy-files :added "0.1"}
+(fact "copies all files from the template directory into the output directory")
+
 ^{:refer hydrox.doc/render-single :added "0.1"}
 (fact "render for a single entry in the project.clj map")
 

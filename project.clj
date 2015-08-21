@@ -5,24 +5,24 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [im.chit/jai  "0.2.7"]
-                 [im.chit/hara "2.2.7"]
+                 [im.chit/hara.data      "2.2.7"]
+                 [im.chit/hara.io.watch  "2.2.7"]
+                 [im.chit/hara.common.watch  "2.2.7"]
+                 [im.chit/hara.component "2.2.7"]
+                 [im.chit/hara.event     "2.2.7"]
+                 [im.chit/hara.string    "2.2.7"]
                  [hiccup "1.0.5"]
                  [markdown-clj "0.9.66"]
                  [stencil "0.3.5"]
                  [me.raynes/fs "1.4.6"]]
   :documentation {:site   "hydrox"
                   :output "docs"
-                  :description "dive deeper into your code"
-                  :tracking "UA-31320512-2"
-                  :owners [{:name    "Chris Zheng"
-                            :email   "chris@helpshift.com"
-                            :website "http://www.helpshift.com"}]
                   :template {:path "template"
                              :copy ["assets"]
                              :defaults {:template     "article.html"
                                         :navbar       [:file "partials/navbar.html"]
                                         :dependencies [:file "partials/deps-web.html"]
-                                        :contentbar   :navigation
+                                        :navigation   :navigation
                                         :article      :article}}
                   :paths ["test/documentation"]
                   :files {"sample-document"
@@ -33,8 +33,8 @@
                           {:input "test/documentation/hydrox_guide.clj"
                            :title "hydrox"
                            :subtitle "dive deeper into your code"}}
-                :link {:auto-tag    true
-                       :auto-number true}}
+                  :link {:auto-tag    true
+                         :auto-number  true}}
 
   :profiles {:dev {:dependencies [[midje "1.7.0"]
                                   [compojure "1.4.0"]

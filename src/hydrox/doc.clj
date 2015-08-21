@@ -41,7 +41,7 @@
 
 (defn find-includes
   "finds elements with `@=` tags
-
+ 
    (find-includes \"<@=hello> <@=world>\")
    => #{:hello :world}"
   {:added "0.1"}
@@ -91,6 +91,8 @@
     (spit output-path html)))
 
 (defn copy-files
+  "copies all files from the template directory into the output directory"
+  {:added "0.1"}
   [folio]
   (let [root     (-> folio :project :root)
         path     (-> folio :project :documentation :template :path)
@@ -105,6 +107,7 @@
   [folio name]
   (let [opts (-> folio :project :documentation)
         entry (get-in opts [:files name])]
+    (copy-files folio)
     (render-entry name entry folio)))
 
 (defn render-all
@@ -112,30 +115,6 @@
   {:added "0.1"}
   [folio]
   (let [opts (-> folio :project :documentation)]
+    (copy-files folio)
     (doseq [[name entry] (:files opts)]
       (render-entry name entry folio))))
-
-(comment
-  (copy-files
-   (-> hydrox.core.regulator/*running*
-       first :state
-       deref
-       ))
-
-  (fs/copy-dir )
-  
-  (dive)
-  (-> hydrox.core.regulator/*running*
-      first :project :root)
-  "/Users/chris/Development/helpshift/hydrox"
-  => "docs"
-  (-> hydrox.core.regulator/*running*
-      first :root)
-
-  (-> hydrox.core.regulator/*running*
-      first :project :documentation
-      :template :copy)
-  => ["assets/css" "assets/js" "assets/img"]
-
-
-  )

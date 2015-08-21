@@ -27,6 +27,13 @@
          (update-in [:source-paths] (fnil identity ["src"]))
          (update-in [:test-paths] (fnil identity ["test"]))))))
 
+(defn submerged?
+  "checks if dive has started"
+  {:added "0.1"}
+  ([] (submerged? regulator/*running*))
+  ([regs]
+   (if (empty? regs) false true)))
+
 (defn single-use
   "returns a working regulator for a given project file"
   {:added "0.1"}
@@ -42,7 +49,10 @@
 (defn import-docstring
   "imports docstrings given a regulator"
   {:added "0.1"}
-  ([] (mapv #(import-docstring % :all) regulator/*running*))
+  ([]
+   (if (submerged?)
+     (mapv #(import-docstring % :all) regulator/*running*)
+     (println "call `dive` first before running this function")))
   ([reg] (import-docstring reg :all))
   ([reg ns] (import-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
@@ -60,7 +70,10 @@
 (defn purge-docstring
   "purges docstrings given a regulator"
   {:added "0.1"}
-  ([] (mapv #(purge-docstring % :all) regulator/*running*))
+  ([]
+   (if (submerged?)
+     (mapv #(purge-docstring % :all) regulator/*running*)
+     (println "call `dive` first before running this function")))
   ([reg] (purge-docstring reg :all))
   ([reg ns] (purge-docstring reg ns nil))
   ([{:keys [state project] :as reg} ns var]
@@ -77,7 +90,10 @@
 (defn generate-docs
   "generates html docs for :documentation entries in project.clj"
   {:added "0.1"}
-  ([] (mapv generate-docs regulator/*running*))
+  ([]
+   (if (submerged?)
+     (mapv generate-docs regulator/*running*)
+     (println "call `dive` first before running this function")))
   ([{:keys [state] :as reg}]
    (doc/render-all @state))
   ([{:keys [state] :as reg} name]

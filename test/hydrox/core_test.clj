@@ -10,6 +10,9 @@
   => (just [:description :license :name :source-paths :test-paths
             :documentation :root :url :version :dependencies] :in-any-order))
 
+^{:refer hydrox.core/submerged? :added "0.1"}
+(fact "checks if dive has started")
+
 ^{:refer hydrox.core/single-use :added "0.1"}
 (fact "returns a working regulator for a given project file")
 
