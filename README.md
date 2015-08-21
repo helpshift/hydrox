@@ -29,9 +29,9 @@ Please see the [docs](http://helpshift.github.io/hydrox) for more information (g
 
 ## Links and References:
 
-- the website for [hara](https://www.github.com/zcaudate/hara) has been generated using [hydrox](https://www.github.com/helpshift/hydrox)
+- the generated website for [hara](https://www.github.com/zcaudate/hara) can be seen [here](http://docs.caudate.me/hara)
 
-- the (output)[http://helpshift.github.io/hydrox/sample-document.html] can be seen for a sample [input](https://github.com/helpshift/hydrox/blob/master/test/documentation/sample_document.clj)
+- the `.html` [output](http://helpshift.github.io/hydrox/sample-document.html) can be seen for a sample `.clj` [input](https://github.com/helpshift/hydrox/blob/master/test/documentation/sample_document.clj)
 
 ## License
 
