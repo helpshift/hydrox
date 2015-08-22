@@ -41,6 +41,14 @@
   ((wrap-meta query/match) zloc {:pattern [[#'map?]]}))
 
 (defn code-directive?
+  "checks if the element is a code directive
+ 
+   (-> \"[[:code {:type :javascript} 
+          \\\"1 + 1 == 2\\\"]]\"
+       z/of-string
+       code-directive?)
+   => true"
+  {:added "0.1"}
   [zloc]
   ((wrap-meta query/match) zloc {:pattern [[:code #'map? #'string?]]}))
 

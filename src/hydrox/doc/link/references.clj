@@ -12,7 +12,8 @@
         (take-while identity)
         (map z/node)
         (process-doc-nodes))
-   => \"(+ 1 1)\\n  =>\\n  (+ 2 2)\""
+   => \"(+ 1 1) => (+ 2 2)\"
+   "
   {:added "0.1"}
   [docs]
   (->> docs
@@ -32,14 +33,17 @@
                      :references '{example.core {hello {:docs []
                                                         :source \"(defn hello [] 1)\"}}}}
                     \"example\")
-   => '{:articles {\"example\"
-                   {:elements [{:type :code,
-                               :refer example.core/hello,
-                                :origin :reference,
-                                :indentation 0,
-                                :code \"(defn hello [] 1)\",
-                                :mode :source}]}},
-        :references {example.core {hello {:docs [], :source \"(defn hello [] 1)\"}}}}"
+   => {:articles
+       {\"example\"
+       {:elements
+         '[{:type :code,
+            :refer example.core/hello,
+            :origin :reference,
+            :indentation 0,
+            :code \"(defn hello [] 1)\",
+            :mode :source,
+            :title \"source of <i>example.core/hello</i>\"}]}},
+       :references '{example.core {hello {:docs [], :source \"(defn hello [] 1)\"}}}}"
   {:added "0.1"}
   [{:keys [references] :as folio} name]
   (update-in folio [:articles name :elements]
