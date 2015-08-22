@@ -1,5 +1,6 @@
 (ns documentation.sample-document
-  (:require [midje.sweet :refer :all]))
+  (:require [midje.sweet :refer :all]
+            [hydrox.core :as hydrox]))
 
 [[:chapter {:tag "hello" :title "Hello Midje Doc"}]]
 
@@ -19,19 +20,22 @@
  [e.{{add-5-1}}](#add-5-1) and [e.{{add-5-10}}](#add-5-10):"
 
 
+[[{:tag "eq1"}]]
 (fact
   (+ 1 0) => 1
   (+ 1 3) => 4)
 
+;;[[{:tag "eq2" :title "some equations 2"}]]
 (comment
   (+ 1 1) => 2
   (+ 1 3) => 2)
 
-
 (facts
-  [[{:tag "add-5-1" :title "1 add 5 = 6"}]]
+  [[{:tag "add-5-1" :title "1 add 5 equals 6"}]]
   (add-5 1) => 6
+  [[{:tag "add-5-10" :title "10 add 5 equals 15"}]]
+  (add-5 10) => 15)
 
-  [[{:tag "add-5-10" :title "10 add 5 = 15"}]]
-  (add-5 10) => 15
-  )
+[[:reference {:mode :source :refer hydrox.core/dive}]]
+
+[[:reference {:mode :docs :refer hydrox.doc.parse/code-form}]]

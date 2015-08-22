@@ -197,6 +197,12 @@ footer p {
   margin-top:30px
 }
 
+.code h5{
+  font-weight: 900;
+  margin-top: 20px;
+  margin-bottom: 3px;
+}
+
 
 ul.sidebar .submenu-item {
   margin-left: 10px;

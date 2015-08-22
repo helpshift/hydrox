@@ -28,3 +28,24 @@
 
 ^{:refer hydrox.doc/render-all :added "0.1"}
 (fact "render for all documentation entries in the project.clj map")
+
+(comment
+  (-> (prepare-article
+       (-> hydrox.core.regulator/*running*
+           first
+           :state
+           deref)
+       "sample-document"
+       "test/documentation/sample_document.clj")
+      :anchors-lu
+      (get-in [:articles "sample-document" :elements]))
+
+  
+  
+  
+  
+  
+  
+
+  
+  )

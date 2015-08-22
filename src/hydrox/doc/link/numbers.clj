@@ -68,16 +68,23 @@
                      :chapter (increment chapter)
                      :section 0 :subsection 0 :subsubsection 0 :code 0)]
 
-             (if (and (#{:code :image :equation} type)
+             (if (and (#{:code :image :equation :block} type)
                       (or (auto-number type)
                           (auto-number origin)
                           (:numbered ele))
+                      (or (:tag ele) (:title ele))
                       (not (or (:hidden ele)
                                (false? (:numbered ele)))))
                (case type
+
                  :code
                  [(str chapter "." (inc code))
-                      (assoc counter :code (inc code))]
+                  (assoc counter :code (inc code))]
+
+                 :block
+                 [(str chapter "." (inc code))
+                  (assoc counter :code (inc code))]
+
                  :image
                  [(str (inc image))
                   (assoc counter :image (inc image))]
@@ -109,7 +116,7 @@
                                                true)
                                          (drop-while nil?)
                                          (first))
-                        auto-number  (cond (set? auto-number) auto-number
-                                           (false? auto-number) #{}
-                                           (true? auto-number) #{:image :equation})]
+                     auto-number  (cond (set? auto-number) auto-number
+                                        (false? auto-number) #{}
+                                        (true? auto-number) #{:image :equation :code :block})]
                  (link-numbers-loop elements auto-number)))))

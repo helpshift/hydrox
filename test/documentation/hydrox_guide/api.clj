@@ -1,5 +1,6 @@
 (ns documentation.hydrox-guide.api
-  (:use midje.sweet))
+  (:use midje.sweet)
+  (:require [hydrox.core :as hydrox]))
 
 [[:chapter {:title "API Reference"}]]
 
@@ -147,10 +148,11 @@ Here is a tag reference to Chapter Heading - {{ch-heading}}
 
 "Code displayed in documentation are of a few types:
 
- 1. Code that needs to be run (normal clojure code)
- - Code that needs verification taking input and showing output. (midje fact)
- - Code that should not be run (namespace declaration examples)
- - Code in other languages
+1. Code that needs to be run (normal clojure code)
+- Code that needs verification taking input and showing output. (midje fact)
+- Code that should not be run (namespace declaration examples)
+- Code that is part of the library's tests or source definition
+- Code in other languages
 
 The different types of code can be defined so that code examples render properly using a variety of methods
 "
@@ -253,8 +255,23 @@ Documentation examples put in `facts` forms allows the code to be verified for c
   (split "Hello World" #"\s") ;=> ["Hello" "World"]
   )
 
+[[:subsection {:title "reference"}]]
 
-[[:subsection {:title ":code"}]]
+"Sometimes we wish to refer to source/test code that is already in our library, we can do this using the `:reference` directive:"
+
+(comment
+ [[:reference {:refer hydrox.core/dive}]])
+
+[[:reference {:refer hydrox.core/dive}]]
+
+"We can refer to tests as well by changing the `:mode` to `:docs` (by default it is `:source`):"
+
+(comment
+ [[:reference {:refer hydrox.meta.util/append-node :mode :docs}]])
+
+[[:reference {:refer hydrox.meta.util/append-node :mode :docs}]]
+
+[[:subsection {:title "code"}]]
 "The most generic way of displaying code is with the `:code` tag. It is useful when code in other languages are required to be in the documentation."
 
 [[:subsubsection {:title "Python Example"}]]
@@ -297,11 +314,3 @@ array.each_with_index do |element,index|
 end
 "
   ]]
-
-[[:reference {:mode :source :refer hydrox.core/dive}]]
-
-[[:reference {:mode :docs :refer hydrox.doc.parse/code-form}]]
-
-;;[[:namespace {:name "hydrox.core"}]]
-
-

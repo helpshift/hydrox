@@ -63,12 +63,19 @@
 
 (defmethod render
   :code
-  [{:keys [tag text code indentation lang] :as element} folio]
-  [:div {:class :code :hljs :hljs :no-escape :no-escape :language (or lang :clojure)}
-   (-> code
-       (util/join)
-       (util/basic-html-escape)
-       (util/adjust-indent indentation))])
+  [{:keys [tag text code indentation lang number title] :as element} folio]
+  [:div {:class :code}
+   (if tag [:a {:name tag}])
+   (if number
+     [:h5 (str "e." number
+               (if title (str "  &nbsp;-&nbsp; " title)))])
+   [:div {:hljs :hljs :no-escape :no-escape :language (or lang :clojure)}
+    (-> code
+        (util/join)
+        (util/basic-html-escape)
+        (util/adjust-indent indentation)
+        (string/trimr)
+        (string/trim-newline))]])
 
 (defmethod render
   :block
@@ -78,7 +85,7 @@
 (defmethod render
   :image
   [{:keys [tag title text number] :as element} folio]
-  [:div {:class "figure"}
+  [:div {:class :figure}
    (if tag [:a {:name tag}])
    [:div {:class "img"}
     [:img (dissoc element :number :type :tag :text :title)]]
@@ -89,15 +96,3 @@
 (defmethod render
   :namespace
   [{:keys [mode] :as element} folio])
-
-(comment
-  (render
-   {:type :reference :mode :docs :refer 'hydrox.doc.parse/parse-ns-form}
-   (-> hydrox.core.regulator/*running*
-              first
-              :state
-              deref))
-
-  (hydrox.core/generate-docs)
-  
-  )

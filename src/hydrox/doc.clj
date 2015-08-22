@@ -20,14 +20,14 @@
         (collect/collect-article name)
         (collect/collect-namespaces name)
         (collect/collect-tags name)
+        (collect/collect-citations name)
         (link/link-namespaces name)
-        (link/link-numbers name)
         (link/link-references name)
+        (link/link-numbers name)
         (link/link-tags name)
         (link/link-anchors-lu name)
         (link/link-anchors name)
-        (link/link-stencil name)
-        (collect/collect-citations name))))
+        (link/link-stencil name))))
 
 (defn generate
   "generates the tree outline for rendering"

@@ -143,6 +143,7 @@ This overlap is very important because this is the one area where repetitive act
 
 "Lets discuss the problem with the following piece of code:"
 
+[[{:title "split-string source" :tag "split-string-normal"}]]
 (defn split-string
   "The split-string function is used to split a string
   in two according to the idx that is passed."
@@ -151,6 +152,8 @@ This overlap is very important because this is the one area where repetitive act
 
 "Technically, everything is fine except that the docstring is pretty much useless. Instead of writing vague phrases, we write our test as follows (usually in another file):
 "
+
+[[{:title "split-string tests" :tag "split-string-tests"}]]
 (comment
   ^{:refer documentation.hydrox-guide/split-string :added "0.1"}
   (facts "split-string usage:"
@@ -173,6 +176,7 @@ This overlap is very important because this is the one area where repetitive act
 
 "Results in the `split-string` function looking like this:"
 
+[[{:title "split-string after import-docstring" :tag "split-string-import"}]]
 (defn split-string
   "split-string usage:
 
@@ -197,6 +201,7 @@ This overlap is very important because this is the one area where repetitive act
 
 "Results in the `split-string` function looking like this, having no docstring or metadata:"
 
+[[{:title "split-string after purge-docstring" :tag "split-string-purge"}]]
 (defn split-string
   [s idx]
   [(.substring s 0 idx) (.substring s idx)])

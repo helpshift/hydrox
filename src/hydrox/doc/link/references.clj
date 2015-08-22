@@ -16,8 +16,6 @@
   {:added "0.1"}
   [docs]
   (->> docs
-       #_(filter (fn [x] (and (not (node/whitespace? x))
-                            (not (string? (node/value x))))))
        (map (fn [node]
               (let [res (node/string node)]
                 (cond (and (not (node/whitespace? node))
@@ -25,8 +23,7 @@
                       (util/escape-newlines res)
 
                       :else res))))
-       (string/join)
-       ))
+       (string/join)))
 
 (defn link-references
   "link code for elements to references
@@ -57,11 +54,12 @@
                                code (case mode
                                       :source code
                                       :docs   (process-doc-nodes code))]
-                           (assoc element
-                                  :type :code
-                                  :origin :reference
-                                  :indentation 0
-                                  :code code
-                                  :mode mode))
+                           (-> element
+                               (assoc :type :code
+                                      :origin :reference
+                                      :indentation (case mode :source 0 :docs 2)
+                                      :code code
+                                      :mode mode)
+                               (update-in [:title] #(or % (str (clojure.core/name mode) " of <i>" refer "</i>")))))
                          element))
                      elements))))
