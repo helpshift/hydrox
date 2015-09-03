@@ -30,6 +30,15 @@
 (fact "render for all documentation entries in the project.clj map")
 
 (comment
+
+  (use 'hydrox.core)
+
+  (def reg (single-use "../../chit/hara/project.clj"))
+
+  (import-docstring reg)
+  (generate-docs )
+
+  
   (-> (prepare-article
        (-> hydrox.core.regulator/*running*
            first
@@ -38,14 +47,4 @@
        "sample-document"
        "test/documentation/sample_document.clj")
       :anchors-lu
-      (get-in [:articles "sample-document" :elements]))
-
-  
-  
-  
-  
-  
-  
-
-  
-  )
+      (get-in [:articles "sample-document" :elements])))
