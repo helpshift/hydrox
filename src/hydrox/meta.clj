@@ -12,7 +12,7 @@
   {:added "0.1"}
   ([] (selector nil))
   ([var]
-   [(list '#{defn defmulti} '| (or var '_) '^:%?- string? '^:%?- map? '& '_)]))
+   [(list '#{defn defmacro defmulti} '| (or var '_) '^:%?- string? '^:%?- map? '& '_)]))
 
 (defn edit-file
   "helper function for file manipulation used by import and purge"

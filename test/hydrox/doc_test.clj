@@ -1,6 +1,7 @@
 (ns hydrox.doc-test
   (:use midje.sweet)
-  (:require [hydrox.doc :refer :all]))
+  (:require [hydrox.doc :refer :all]
+            [hydrox.analyse :as analyser]))
 
 ^{:refer hydrox.doc/prepare-article :added "0.1"}
 (fact "generates the flat outline for rendering")
@@ -35,7 +36,13 @@
 
   (def reg (single-use "../../chit/hara/project.clj"))
 
+  
+  
+  (keys @(:state reg))
+  (:meta :articles :namespaces :project :references :registry :root :namespace-lu)
+  (-> @(:state reg) :references (get-in ['hara.group 'defgroup]))
   (import-docstring reg)
+  (import-docstring reg 'hara.group)
   (generate-docs )
 
   
