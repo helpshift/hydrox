@@ -35,7 +35,7 @@
   (use 'hydrox.core)
 
   (def reg (single-use "../../chit/hara/project.clj"))
-
+  (swap! (:state reg) #(analyser/add-file % (clojure.java.io/file "../../chit/hara/test/hara/group_test.clj")))
   
   
   (keys @(:state reg))
