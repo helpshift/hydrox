@@ -9,8 +9,8 @@
 
 (defn render-article [{:keys [elements]} folio]
   (->> elements
-       (map #(article/render % folio))
-       (#'compiler/compile-seq)
+       (mapv #(article/render % folio))
+       (mapcat (fn [ele] (#'compiler/compile-seq [ele])))
        (string/join)))
 
 (defn render-navigation [{:keys [elements]} folio]
@@ -22,13 +22,15 @@
          (string/join))))
 
 (defn replace-template [template includes opts project]
-  (reduce-kv (fn [html k v]
-               (.replaceAll html (str "<@=" (name k) ">")
-                            (cond (string? v)
-                                  v
+  (reduce-kv (fn [^String html k v]
+               (let [value (cond (string? v)
+                                 v
 
-                                  (vector? v)
-                                  (cond (= (first v) :file)
-                                        (slurp (util/full-path (second v) (-> opts :template :path) project))))))
+                                 (vector? v)
+                                 (cond (= (first v) :file)
+                                       (slurp (util/full-path (second v) (-> opts :template :path) project))))]
+                 (.replaceAll html
+                              (str "<@=" (name k) ">")
+                              value)))
              template
              includes))

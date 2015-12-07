@@ -4,7 +4,8 @@
              test source]
             [hydrox.common.data :as data]
             [clojure.java.io :as io]
-            [hara.data.diff :as diff]))
+            [hara.data.diff :as diff])
+  (:import java.io.File))
 
 (def access-paths
   [[[:source-paths]         :source]
@@ -27,11 +28,11 @@
                :test-paths   [\"test\"]} (io/file \"src/code.clj\"))
    => :source"
   {:added "0.1"}
-  [project file]
+  [project ^File file]
   (let [path (.getCanonicalPath file)]
     (or (->> access-paths
              (keep (fn [[v res]]
-                     (if (some (fn [x] (<= 0 (.indexOf path x)))
+                     (if (some (fn [^String x] (<= 0 (.indexOf path x)))
                                (get-in project v))
                        res)))
              (first))
@@ -55,7 +56,7 @@
                             :source \"(defn foo\\n  [x]\\n  (println x \\\"Hello, World!\\\"))\"}}},
         :namespace-lu {'example.core (str user-dir \"/example/src/example/core.clj\")}})"
   {:added "0.1"}
-  [folio file]
+  [folio ^File file]
   (let [{:keys [project]} folio
         type (file-type project file)]
     (println "\nProcessing" file)
@@ -86,7 +87,7 @@
        :references {}
        :namespace-lu {}}"
   {:added "0.1"}
-  [folio file]
+  [folio ^File file]
   (let [{:keys [project]} folio
         type (file-type project file)]
     (println "\nRemoving" file)

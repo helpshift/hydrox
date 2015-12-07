@@ -1,6 +1,7 @@
 (ns hydrox.doc.render.article
   (:require [hydrox.doc.render.util :as util]
             [hydrox.doc.structure :as structure]
+            [hydrox.doc.link.references :as references]
             [rewrite-clj.node :as node]
             [clojure.string :as string]))
 
@@ -96,3 +97,61 @@
 (defmethod render
   :namespace
   [{:keys [mode] :as element} folio])
+
+(defn render-api-index [namespace tag nsp]
+  (->> nsp
+       (map first)
+       (map (fn [sym]
+              [:a {:href (str "#" tag "--" sym)} (str sym)]))
+       (#(interleave % (repeat "&nbsp;&nbsp;")))
+       (apply vector :div [:a {:name tag}]
+              [:h4 [:i "API"]])))
+
+(defn render-api-elements [namespace tag nsp]
+  (->> nsp
+       (mapv (fn [[func data]]
+               [:div
+                [:a {:name (str tag "--" (name func))}]
+                [:h4 (name func)
+                 " " [:a {:href (str "#" tag)} "&#9652;"]]
+                [:div {:hljs :hljs :no-escape :no-escape :language :clojure}
+                 (with-redefs [hydrox.meta.util/escape-newlines identity]
+                   (-> (:docs data)
+                       (references/process-doc-nodes)
+                       (util/join)
+                       (util/basic-html-escape)
+                       (util/adjust-indent 2)
+                       (string/trimr)
+                       (string/trim-newline)))]]))
+       (apply vector :div)))
+
+(defmethod render
+  :api
+  [{:keys [namespace tag] :as element} folio]
+  (let [tag (or tag (str "api-" (.replaceAll ^String namespace "\\." "-")))
+        nsp (-> folio
+                 :references
+                 (get (symbol namespace))
+                 (->> (filter (fn [[_ data]] (:docs data)))
+                      (sort-by first)))]
+    [:div {:class :api}
+     [:hr]
+     (render-api-index namespace tag nsp)
+     [:hr]
+     (render-api-elements namespace tag nsp)]))
+
+(comment
+
+  [:p (-> folio
+           :references
+           (get (symbol namespace))
+           keys
+           (map str))]
+
+  #_(-> folio
+          :references
+          (get (symbol namespace))
+          first
+          second
+          :docs
+          (references/process-doc-nodes)))

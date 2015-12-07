@@ -20,6 +20,7 @@
        (map (fn [node]
               (let [res (node/string node)]
                 (cond (and (not (node/whitespace? node))
+                           (not (node/comment? node))
                            (string? (node/value node)))
                       (util/escape-newlines res)
 
