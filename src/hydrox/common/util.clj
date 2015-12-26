@@ -8,3 +8,7 @@
                            (assoc m k v)
                            m))
              {} m))
+
+(defn escape-dollars
+  [s]
+  (.replaceAll s "\\$" "\\\\\\$"))

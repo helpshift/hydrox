@@ -31,6 +31,6 @@
                                        (slurp (util/full-path (second v) (-> opts :template :path) project))))]
                  (.replaceAll html
                               (str "<@=" (name k) ">")
-                              value)))
+                              (util/escape-dollars value))))
              template
              includes))
