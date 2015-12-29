@@ -2,30 +2,9 @@
   (:require [hydrox.meta :as meta]
             [hydrox.doc :as doc]
             [hydrox.core.regulator :as regulator]
+            [hydrox.common.util :as util]
             [hara.component :as component]
             [clojure.java.io :as io]))
-
-(defn read-project
-  "like `leiningen.core.project/read` but with less features'
- 
-   (keys (read-project (io/file \"example/project.clj\")))
-   => (just [:description :license :name :source-paths :test-paths
-             :documentation :root :url :version :dependencies] :in-any-order)"
-  {:added "0.1"}
-  ([] (read-project (io/file "project.clj")))
-  ([file]
-   (let [path  (.getCanonicalPath file)
-         root  (subs path 0 (- (count path) 12))
-         pform (read-string (slurp file))
-         [_ name version] (take 3 pform)
-         proj  (->> (drop 3 pform)
-                    (concat [:name name
-                             :version version
-                             :root root])
-                    (apply hash-map))]
-     (-> proj
-         (update-in [:source-paths] (fnil identity ["src"]))
-         (update-in [:test-paths] (fnil identity ["test"]))))))
 
 (defn submerged?
   "checks if dive has started"
@@ -39,7 +18,7 @@
   {:added "0.1"}
   ([] (single-use "project.clj"))
   ([path]
-   (let [proj  (read-project (io/file path))
+   (let [proj  (util/read-project (io/file path))
          folio (-> proj
                    (regulator/create-folio)
                    (regulator/init-folio))
@@ -103,8 +82,13 @@
   "starts a dive"
   {:added "0.1"}
   ([] (dive "project.clj"))
-  ([path]
-   (component/start (regulator/regulator (read-project (io/file path))))))
+  ([path] (dive path {}))
+  ([path opts]
+   (->> (io/file path)
+        (util/read-project)
+        (merge opts)
+        (regulator/regulator)
+        (component/start))))
 
 (defn surface
   "finishes a dive"

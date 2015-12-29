@@ -6,9 +6,9 @@
 
 (defn selector
   "builds a selector for functions
-   
+ 
    (selector 'hello)
-   => '[(#{defn defmulti} | hello ^:%?- string? ^:%?- map? & _)]"
+   => '[(#{defn defmacro defmulti} | hello ^:%?- string? ^:%?- map? & _)]"
   {:added "0.1"}
   ([] (selector nil))
   ([var]

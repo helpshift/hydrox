@@ -78,7 +78,7 @@
   (println "Rendering" name)
   (let [project        (:project folio)
         opts           (:documentation project)
-        entry          (merge (util/filter-strings project)
+        entry          (merge (util/filter-pred string? project)
                               (-> opts :template :defaults)
                               entry)
         template-path  (util/full-path (:template entry) (-> opts :template :path) project)

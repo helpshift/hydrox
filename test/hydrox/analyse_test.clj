@@ -2,6 +2,7 @@
   (:use midje.sweet)
   (:require [hydrox.analyse :refer :all]
             [hydrox.core :as hydrox]
+            [hydrox.common.util :as util]
             [clojure.java.io :as io]))
 
 (defmacro contains-in [m]
@@ -29,7 +30,7 @@
 
 ^{:refer hydrox.analyse/add-file :added "0.1"}
 (fact "adds a file to the folio"
-  (-> {:project (hydrox/read-project (io/file "example/project.clj"))}
+  (-> {:project (util/read-project (io/file "example/project.clj"))}
       (add-file (io/file "example/test/example/core_test.clj"))
       (add-file (io/file "example/src/example/core.clj"))
       (dissoc :project))
@@ -47,7 +48,7 @@
 
 ^{:refer hydrox.analyse/remove-file :added "0.1"}
 (fact "removes a file to the folio"
-  (-> {:project (hydrox/read-project (io/file "example/project.clj"))}
+  (-> {:project (util/read-project (io/file "example/project.clj"))}
       (add-file (io/file "example/src/example/core.clj"))
       (remove-file (io/file "example/src/example/core.clj"))
       (dissoc :project))

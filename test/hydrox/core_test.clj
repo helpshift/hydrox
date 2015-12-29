@@ -1,14 +1,12 @@
 (ns hydrox.core-test
   (:use midje.sweet)
   (:require [hydrox.core :refer :all]
-            [clojure.java.io :as io]))
-
-^{:refer hydrox.core/read-project :added "0.1"}
-(fact "like `leiningen.core.project/read` but with less features'"
-
-  (keys (read-project (io/file "example/project.clj")))
-  => (just [:description :license :name :source-paths :test-paths
-            :documentation :root :url :version :dependencies] :in-any-order))
+            [hydrox.analyse :as analyser]
+            [hydrox.common.util :as util]
+            [hydrox.core.regulator :as regulator]
+            [hara.component :as component]
+            [clojure.java.io :as io]
+            [clojure.core.async :as async]))
 
 ^{:refer hydrox.core/submerged? :added "0.1"}
 (fact "checks if dive has started")
@@ -33,6 +31,9 @@
 
 
 (comment
+
+
+  
   (event/deflistener log-listener
     :log
     m
@@ -58,23 +59,45 @@
   )
 
 (comment
+  
   (component/start (regulator (read-project (io/file "../hara/project.clj"))))
 
-  (def reg (let [proj  (read-project)
+  (def reg (let [proj   (util/read-project)
                  folio (-> proj
                            (create-folio)
                            (init-folio))
                  state (atom folio)]
              (Regulator. state proj)))
 
-  (def reg (let [proj  (read-project)
+  (def reg (let [proj  (-> (util/read-project)
+                           (assoc :initialise false))
                  folio (-> proj
-                           (create-folio)
-                           (analyser/add-file (io/file "src/hydrox/analyser/test.clj"))
-                           (analyser/add-file (io/file "test/hydrox/analyser/test_test.clj")))
+                           (regulator/create-folio)
+                           (analyser/add-file (io/file "src/hydrox/core/regulator.clj")))
                  state (atom folio)]
-             (Regulator. state proj)))
+             (regulator/regulator state proj)))
 
+  (-> reg :state deref :sink deref)
+ 
+  (component/start reg)
+
+  (dive)
+  (surface)
+  (generate-docs)
+  
+  (async/go
+    (let [d (async/<! (:channel @(:state reg)))]
+      (println d)))
+
+  (-> regulator/*running*
+      first
+      :state
+      deref
+      :project
+      :version)
+
+  
+  
   (:references @(:state reg))
 
   (import-docstring (once-off "project.clj"))

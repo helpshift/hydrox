@@ -29,6 +29,8 @@
   (.write w (str v)))
 
 (defn folio
+  "constructs a folio object"
+  {:added "0.1"}
   ([m] (map->Folio m)))
 
 ;; {<ns> {<var> {:source <> :docs <> :meta <>}}}
@@ -51,5 +53,7 @@
   (.write w (str v)))
 
 (defn references
+  "constructs a reference object"
+  {:added "0.1"}
   ([]  (References.))
   ([m] (map->References m)))

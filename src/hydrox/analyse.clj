@@ -2,7 +2,9 @@
   (:require [hydrox.analyse
              [common :as common]
              test source]
-            [hydrox.common.data :as data]
+            [hydrox.common
+             [data :as data]
+             [util :as util]]
             [clojure.java.io :as io]
             [hara.data.diff :as diff])
   (:import java.io.File))
@@ -36,11 +38,33 @@
                                (get-in project v))
                        res)))
              (first))
+
+        (if (= path (str (:root project) "/" "project.clj"))
+          :project)
+        
         :ignore)))
+
+(defn add-file-code
+  [{:keys [project] :as folio} ^File file type]
+  (let [fkey     (.getCanonicalPath file)
+        registry (get-in folio [:registry fkey])
+        result   (common/analyse-file type file project)
+        diff     (diff/diff result registry)
+        folio    (-> folio
+                     (assoc-in  [:registry fkey] result)
+                     (update-in [:references] diff/patch diff))
+        plus     (concat (-> diff :+ keys) (-> diff :> keys))
+        minus    (-> diff :- keys)    ]
+    (if (not-empty plus)  (println "Associating:" plus))
+    (if (not-empty minus) (println "Deleting:" minus))
+    (if (= type :source)
+      (assoc-in folio [:namespace-lu (first (keys result))] fkey)
+      folio)))
+
 
 (defn add-file
   "adds a file to the folio
-   (-> {:project (hydrox/read-project (io/file \"example/project.clj\"))}
+   (-> {:project (util/read-project (io/file \"example/project.clj\"))}
        (add-file (io/file \"example/test/example/core_test.clj\"))
        (add-file (io/file \"example/src/example/core.clj\"))
        (dissoc :project))
@@ -56,30 +80,25 @@
                             :source \"(defn foo\\n  [x]\\n  (println x \\\"Hello, World!\\\"))\"}}},
         :namespace-lu {'example.core (str user-dir \"/example/src/example/core.clj\")}})"
   {:added "0.1"}
-  [folio ^File file]
-  (let [{:keys [project]} folio
-        type (file-type project file)]
-    (println "\nProcessing" file)
-
+  [{:keys [project] :as folio} file]
+  (let [type (file-type project file)]
     (cond (#{:source :test} type)
-          (let [fkey     (.getCanonicalPath file)
-                registry (get-in folio [:registry fkey])
-                result   (common/analyse-file type file project)
-                diff     (diff/diff result registry)
-                _        (do (println "Associating:" (concat (-> diff :+ keys) (-> diff :> keys)))
-                             (println "Deleting:"    (concat (-> diff :- keys))))
-                folio    (-> folio
-                             (assoc-in  [:registry fkey] result)
-                             (update-in [:references] diff/patch diff))]
-            (if (= type :source)
-              (assoc-in folio [:namespace-lu (first (keys result))] fkey)
-              folio))
+          (add-file-code folio file type)
 
-          :else folio)))
+          (= :project type)
+          (do (println "PROJECT CHANGED")
+              (->> (util/read-project (str (:root project) "/project.clj"))
+                   (update-in folio [:project] merge)))
+
+          (= :documentation type)
+          folio
+
+          :else
+          folio)))
 
 (defn remove-file
   "removes a file to the folio
-   (-> {:project (hydrox/read-project (io/file \"example/project.clj\"))}
+   (-> {:project (util/read-project (io/file \"example/project.clj\"))}
        (add-file (io/file \"example/src/example/core.clj\"))
        (remove-file (io/file \"example/src/example/core.clj\"))
        (dissoc :project))
@@ -96,11 +115,10 @@
           (let [fkey     (.getCanonicalPath file)
                 registry (get-in folio [:registry fkey])
                 diff     (diff/diff {} registry)
-                _        (do (println "Associating:" (concat (-> diff :+ keys) (-> diff :> keys)))
-                             (println "Deleting:"    (concat (-> diff :- keys))))
                 folio    (-> folio
                              (update-in [:registry] dissoc  fkey)
                              (update-in [:references] diff/patch diff))]
+            (println "Deleting:"  (-> diff :- keys)) 
             (if (= type :source)
               (update-in folio [:namespace-lu]
                          (fn [m] (reduce-kv (fn [out k v]
@@ -110,5 +128,5 @@
                                            {}
                                            m)))
               folio))
-          
+
           :else folio)))

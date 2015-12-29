@@ -7,6 +7,7 @@
             [hara.event :as event]
             [hara.component :as component]
             [hara.io.watch]
+            [hara.concurrent.pipe :as pipe]
             [clojure.java.io :as io]))
 
 (defonce ^:dynamic *running* #{})
@@ -14,27 +15,28 @@
 (defn create-folio
   "creates the folio for storing all the documentation information"
   {:added "0.1"}
-  [{:keys [root] :as project}]
+  [{:keys [root initialise docs filter] :as project}]
   (data/folio {:meta        {}
                :articles    {}
                :namespaces  {}
                :project     project
                :references  (data/references)
                :registry    (data/registry)
-               :root        root}))
+               :root        root
+               :initialise  (if-not (nil? initialise) initialise true)
+               :docs        (or docs false)
+               :filter      (or filter [".clj" ".cljs" ".cljc"])
+               :pipe        (atom nil)}))
 
 (defn mount-folio
   "adds a watcher to update function/test definitions when files in the project changes"
   {:added "0.1"}
-  [state {:keys [project root] :as folio}]
+  [state {:keys [project root channel filter pipe] :as folio}]
   (let [{:keys [source-paths test-paths]} project]
     (watch/add (io/as-file root) :hydrox
-               (fn [_ _ _ [type file]]
-                 (case type
-                   :create (swap! state analyser/add-file file)
-                   :modify (swap! state analyser/add-file file)
-                   :delete (swap! state analyser/remove-file file)))
-               {:filter  [".clj"]
+               (fn [_ _ _ [type file :as out]]
+                 (pipe/send @pipe out))
+               {:filter  filter
                 :recursive true
                 :include (concat source-paths test-paths)})
     folio))
@@ -48,12 +50,23 @@
 (defn init-folio
   "runs through all the files and adds function/test definitions to the project"
   {:added "0.1"}
-  [{:keys [project] :as folio}]
-  (reduce (fn [folio file]
-            (analyser/add-file folio file))
-          folio
-          (concat (util/all-files project :source-paths ".clj")
-                  (util/all-files project :test-paths ".clj"))))
+  [{:keys [project initialise] :as folio}]
+  (if initialise
+    (reduce (fn [folio file]
+              (analyser/add-file folio file))
+            folio
+            (concat (util/all-files project :source-paths ".clj")
+                    (util/all-files project :test-paths ".clj")))
+    folio))
+
+(defn init-pipe
+  [state]
+  (reset! (:pipe @state)
+          (pipe/pipe (fn [[type file]]
+                       (case type
+                         :create (swap! state analyser/add-file file)
+                         :modify (swap! state analyser/add-file file)
+                         :delete (swap! state analyser/remove-file file))))))
 
 (defn start-regulator
   "starts the regulator"
@@ -63,6 +76,7 @@
                   (init-folio))]
     (mount-folio state folio)
     (reset! state folio)
+    (init-pipe state)
     (event/signal [:log {:msg (str "Regulator for " (:name project) " started.")}])
     (alter-var-root #'*running* (fn [s] (conj s obj)))
     obj))
@@ -76,6 +90,7 @@
   (event/signal [:log {:msg (str "Regulator for " (:name project) " stopped.")}])
   (alter-var-root #'*running* (fn [s] (disj s obj)))
   obj)
+
 
 (defrecord Regulator [state project]
 

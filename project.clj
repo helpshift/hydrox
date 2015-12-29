@@ -1,17 +1,18 @@
-(defproject helpshift/hydrox "0.1.6"
+(defproject helpshift/hydrox "0.1.7-SNAPSHOT"
   :description "dive deeper into your code"
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [im.chit/jai  "0.2.8"]
-                 [im.chit/hara.data      "2.2.13"]
-                 [im.chit/hara.io.watch  "2.2.13"]
-                 [im.chit/hara.common.checks  "2.2.13"]
-                 [im.chit/hara.common.watch  "2.2.13"]
-                 [im.chit/hara.component "2.2.13"]
-                 [im.chit/hara.event     "2.2.13"]
-                 [im.chit/hara.string    "2.2.13"]
+                 [im.chit/hara.data      "2.2.14"]
+                 [im.chit/hara.io.watch  "2.2.14"]
+                 [im.chit/hara.common.checks  "2.2.14"]
+                 [im.chit/hara.common.watch  "2.2.14"]
+                 [im.chit/hara.component "2.2.14"]
+                 [im.chit/hara.concurrent.pipe "2.2.14"]
+                 [im.chit/hara.event     "2.2.14"]
+                 [im.chit/hara.string    "2.2.14"]
                  [hiccup "1.0.5"]
                  [markdown-clj "0.9.66"]
                  [stencil "0.3.5"]
@@ -36,6 +37,7 @@
                            :subtitle "dive deeper into your code"}}
                   :link {:auto-tag    true
                          :auto-number  true}}
+
 
   :profiles {:dev {:dependencies [[midje "1.7.0"]
                                   [compojure "1.4.0"]
