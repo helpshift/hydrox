@@ -5,8 +5,7 @@
             [hydrox.common.util :as util]
             [hydrox.core.regulator :as regulator]
             [hara.component :as component]
-            [clojure.java.io :as io]
-            [clojure.core.async :as async]))
+            [clojure.java.io :as io]))
 
 ^{:refer hydrox.core/submerged? :added "0.1"}
 (fact "checks if dive has started")

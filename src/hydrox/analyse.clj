@@ -41,8 +41,9 @@
 
         (if (= path (str (:root project) "/" "project.clj"))
           :project)
-        
-        :ignore)))
+
+        (do (println "IGNORE" file)
+            :ignore))))
 
 (defn add-file-code
   [{:keys [project] :as folio} ^File file type]
@@ -82,6 +83,7 @@
   {:added "0.1"}
   [{:keys [project] :as folio} file]
   (let [type (file-type project file)]
+    (println "ANAlYSE:" type file)
     (cond (#{:source :test} type)
           (add-file-code folio file type)
 
@@ -91,7 +93,7 @@
                    (update-in folio [:project] merge)))
 
           (= :documentation type)
-          folio
+          (do (println "DOCUMENT" file))
 
           :else
           folio)))
