@@ -2,6 +2,7 @@
   (:require [hydrox.analyse
              [common :as common]
              test source]
+            [hydrox.doc :as doc]
             [hydrox.common
              [data :as data]
              [util :as util]]
@@ -45,7 +46,7 @@
         (do (println "IGNORE" file)
             :ignore))))
 
-(defn add-file-code
+(defn add-code
   [{:keys [project] :as folio} ^File file type]
   (let [fkey     (.getCanonicalPath file)
         registry (get-in folio [:registry fkey])
@@ -62,6 +63,28 @@
       (assoc-in folio [:namespace-lu (first (keys result))] fkey)
       folio)))
 
+(defn add-documentation [{:keys [project] :as folio} file]
+  (if (not (:initialisation folio))
+    (let [inputs (-> project :documentation :files)
+          ridx (reduce-kv (fn [out k v]
+                            (assoc out (:input v) k))
+                          {} inputs)
+          choice (->> (keys ridx)
+                      (filter (fn [suffix] (.endsWith (str file) suffix)))
+                      (first))]
+      (if (and choice (not (:manual folio)))
+        (doc/render-single folio (get ridx choice)))))
+  folio)
+
+(defn add-project [{:keys [project] :as folio} file]
+  (let [folio (-> file
+                  (util/read-project)
+                  (select-keys [:version :documentation])
+                  (->> (update-in folio [:project] merge)))]
+    (println "Project Updated")
+    (if-not (:manual folio)
+      (doc/render-all folio))
+    folio))
 
 (defn add-file
   "adds a file to the folio
@@ -83,17 +106,14 @@
   {:added "0.1"}
   [{:keys [project] :as folio} file]
   (let [type (file-type project file)]
-    (println "ANAlYSE:" type file)
     (cond (#{:source :test} type)
-          (add-file-code folio file type)
-
+          (add-code folio file type)
+          
           (= :project type)
-          (do (println "PROJECT CHANGED")
-              (->> (util/read-project (str (:root project) "/project.clj"))
-                   (update-in folio [:project] merge)))
+          (add-project folio file)
 
-          (= :documentation type)
-          (do (println "DOCUMENT" file))
+          (= :doc type)    
+          (add-documentation folio file)
 
           :else
           folio)))

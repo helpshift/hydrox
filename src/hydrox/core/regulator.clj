@@ -15,7 +15,7 @@
 (defn create-folio
   "creates the folio for storing all the documentation information"
   {:added "0.1"}
-  [{:keys [root initialise docs filter] :as project}]
+  [{:keys [root initialise filter manual] :as project}]
   (data/folio {:meta        {}
                :articles    {}
                :namespaces  {}
@@ -24,8 +24,8 @@
                :registry    (data/registry)
                :root        root
                :initialise  (if-not (nil? initialise) initialise true)
-               :docs        (or docs false)
                :filter      (or filter [".clj" ".cljs" ".cljc"])
+               :manual      (or manual false)
                :pipe        (atom nil)}))
 
 (defn mount-folio
@@ -52,11 +52,14 @@
   {:added "0.1"}
   [{:keys [project initialise] :as folio}]
   (if initialise
-    (reduce (fn [folio file]
-              (analyser/add-file folio file))
-            folio
-            (concat (util/all-files project :source-paths ".clj")
-                    (util/all-files project :test-paths ".clj")))
+    (-> folio
+        (assoc :initialisation true)
+        (#(reduce (fn [folio file]
+                    (analyser/add-file folio  file))
+                  %
+                  (concat (util/all-files project :source-paths ".clj")
+                          (util/all-files project :test-paths ".clj"))))
+        (dissoc :initialisation))
     folio))
 
 (defn init-pipe
@@ -108,4 +111,3 @@
    (Regulator. (atom nil) project))
   ([state project]
    (Regulator. state project)))
- 

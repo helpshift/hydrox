@@ -8,7 +8,7 @@
 
 [[:section {:title "Defining a function"}]]
 
-"We define function `add-5` below"
+"We define function `add-5`"
 
 [[{:numbered false}]]
 (defn add-5 [x]

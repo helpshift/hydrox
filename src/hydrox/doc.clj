@@ -98,7 +98,6 @@
         path     (-> folio :project :documentation :template :path)
         target   (str root "/" (-> folio :project :documentation :output))
         sources  (-> folio :project :documentation :template :copy)]
-    (println target sources)
     (mapv #(fs/copy-dir-into (str root "/" path "/" %) target) sources)))
 
 (defn render-single
