@@ -2,6 +2,7 @@
   (:require [hydrox.meta :as meta]
             [hydrox.doc :as doc]
             [hydrox.core.regulator :as regulator]
+            [hydrox.core.patch :as patch]
             [hydrox.common.util :as util]
             [hara.component :as component]
             [clojure.java.io :as io]))
@@ -18,6 +19,7 @@
   {:added "0.1"}
   ([] (single-use "project.clj"))
   ([path]
+   (patch/patch-read-keyword)
    (let [proj  (util/read-project (io/file path))
          folio (-> proj
                    (regulator/create-folio)
@@ -84,6 +86,7 @@
   ([] (dive "project.clj"))
   ([path] (dive path {}))
   ([path opts]
+   (patch/patch-read-keyword)
    (->> (io/file path)
         (util/read-project)
         (merge opts)

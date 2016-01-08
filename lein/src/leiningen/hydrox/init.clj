@@ -24,18 +24,21 @@
     "template/article.html"]})
 
 (defn init [project]
-  ;; copy files
-  (doseq [dir (:directories +template+)]
-    (fs/mkdirs (str (:root project) "/" dir)))
-  (doseq [f (:files +template+)]
-    (io/copy (io/file (io/resource (str "hydrox/" f)))
-             (io/file (:root project) f)))
 
-  ;; place sample entry in project.clj
+  ;; check to see if files exist
   (let [proj (zip/of-file (str (:root project) "/project.clj"))]
-    (if-not (zip/find-depth-first
+    (when-not (zip/find-depth-first
              proj
              (comp #(= :documentation %) zip/sexpr))
+
+      ;; copy files
+      (doseq [dir (:directories +template+)]
+        (fs/mkdirs (str (:root project) "/" dir)))
+      (doseq [f (:files +template+)]
+        (io/copy (io/file (io/resource (str "hydrox/" f)))
+                 (io/file (:root project) f)))
+
+      ;; place sample entry in project.clj
       (-> proj
           zip/down
           zip/rightmost*
@@ -54,5 +57,5 @@
 (comment
   (io/copy (io/file (io/resource (str "hydrox/" "template/article.html")))
            (io/file "template/article.html"))
-  
+
   )

@@ -106,6 +106,7 @@
   {:added "0.1"}
   [{:keys [project] :as folio} file]
   (let [type (file-type project file)]
+    (println "FILE:" (.getName file))
     (cond (#{:source :test} type)
           (add-code folio file type)
           

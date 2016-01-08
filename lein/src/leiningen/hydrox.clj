@@ -2,8 +2,8 @@
   (:require [hydrox.core :as hydrox]
             [hydrox.meta :as meta]
             [hydrox.common.util :as util]
-            [leiningen.hydrox.init :as init]))
-
+            [leiningen.hydrox.init :as init]
+            [leiningen.hydrox.setup :as setup]))
 
 (defn hydrox
   "
@@ -17,17 +17,19 @@
      lein hydrox purge    - purges docstrings from code
   "
   [project & args]
-  (case (first args)
-    nil       (hydrox project "watch")
-    "init"    (init/init project)
-    "watch"   (do (hydrox/dive)
-                  (hydrox/generate-docs)
-                  (Thread/sleep 10000000000))
-    "docs"    (hydrox/generate-docs (hydrox/single-use))
-    "import"  (hydrox/import-docstring (hydrox/single-use))
-    "purge"   (meta/purge-project (util/read-project))
-    "help"    (println (:doc (meta #'hydrox)))
-    (hydrox project "help")))
+  (with-redefs
+    [clojure.tools.reader.edn/read-keyword leiningen.hydrox.setup/read-keyword]
+    (case (first args)
+      nil       (hydrox project "watch")
+      "init"    (init/init project)
+      "watch"   (do (hydrox/dive)
+                    (hydrox/generate-docs)
+                    (Thread/sleep 10000000000))
+      "docs"    (hydrox/generate-docs (hydrox/single-use))
+      "import"  (hydrox/import-docstring (hydrox/single-use))
+      "purge"   (meta/purge-project (util/read-project))
+      "help"    (println (:doc (meta #'hydrox)))
+      (hydrox project "help"))))
 
 (comment
 

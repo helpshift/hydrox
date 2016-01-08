@@ -1,4 +1,4 @@
-(defproject helpshift/hydrox "0.1.7"
+(defproject helpshift/hydrox "0.1.8"
   :description "dive deeper into your code"
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
@@ -37,7 +37,6 @@
                            :subtitle "dive deeper into your code"}}
                   :link {:auto-tag    true
                          :auto-number  true}}
-
 
   :profiles {:dev {:dependencies [[midje "1.7.0"]
                                   [compojure "1.4.0"]
