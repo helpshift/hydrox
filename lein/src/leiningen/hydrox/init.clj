@@ -35,7 +35,7 @@
       (doseq [dir (:directories +template+)]
         (fs/mkdirs (str (:root project) "/" dir)))
       (doseq [f (:files +template+)]
-        (io/copy (io/file (io/resource (str "hydrox/" f)))
+        (io/copy (io/input-stream (io/resource (str "hydrox/" f)))
                  (io/file (:root project) f)))
 
       ;; place sample entry in project.clj
@@ -48,14 +48,15 @@
           (zip/prepend-space 1)
           (zip/insert-left (node/token-node :documentation ":documentation"))
           (zip/insert-left (-> (io/resource "hydrox/sample.edn")
-                                (zip/of-file)
-                                (zip/next)
-                                (zip/node)))
+                               (io/input-stream)
+                               (slurp)
+                               (zip/of-string)
+                               (zip/next)
+                               (zip/node)))
           (zip/->root-string)
           (->> (spit (str (:root project) "/project.clj")))))))
 
+
 (comment
   (io/copy (io/file (io/resource (str "hydrox/" "template/article.html")))
-           (io/file "template/article.html"))
-
-  )
+           (io/file "template/article.html")))

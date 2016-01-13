@@ -1,4 +1,4 @@
-(defproject helpshift/hydrox "0.1.8"
+(defproject helpshift/hydrox "0.1.10"
   :description "dive deeper into your code"
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
