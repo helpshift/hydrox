@@ -41,7 +41,7 @@
 
 (defn find-includes
   "finds elements with `@=` tags
- 
+
    (find-includes \"<@=hello> <@=world>\")
    => #{:hello :world}"
   {:added "0.1"}
@@ -76,19 +76,22 @@
   {:added "0.1"}
   [name entry folio]
   (println "Rendering" name)
-  (let [project        (:project folio)
-        opts           (:documentation project)
-        entry          (merge (util/filter-pred string? project)
-                              (-> opts :template :defaults)
-                              entry)
-        template-path  (util/full-path (:template entry) (-> opts :template :path) project)
-        output-path    (util/full-path (str name ".html") (:output opts) project)
-        template       (slurp template-path)
-        includes       (->> (find-includes template)
-                            (select-keys entry))
-        includes       (prepare-includes name includes folio)
-        html           (render/replace-template template includes opts project)]
-    (spit output-path html)))
+  (try
+    (let [project        (:project folio)
+          opts           (:documentation project)
+          entry          (merge (util/filter-pred string? project)
+                                (-> opts :template :defaults)
+                                entry)
+          template-path  (util/full-path (:template entry) (-> opts :template :path) project)
+          output-path    (util/full-path (str name ".html") (:output opts) project)
+          template       (slurp template-path)
+          includes       (->> (find-includes template)
+                              (select-keys entry))
+          includes       (prepare-includes name includes folio)
+          html           (render/replace-template template includes opts project)]
+      (spit output-path html))
+      (catch Throwable t
+        (println "Unable to render" name))))
 
 (defn copy-files
   "copies all files from the template directory into the output directory"
