@@ -38,6 +38,6 @@
   (def project (project/read))
   (hydrox project "init")
   (hydrox project "docs")
-  
-  
+
+
   )

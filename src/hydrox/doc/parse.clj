@@ -2,6 +2,7 @@
   (:require [jai.query :as query]
             [rewrite-clj.zip :as source]
             [rewrite-clj.node :as node]
+            [jai.query :as query]
             [hydrox.doc.checks :as checks]))
 
 (def ^:dynamic *spacing* 2)
@@ -12,7 +13,7 @@
 
 (defn parse-ns-form
   "converts a ns zipper into an element
- 
+
    (-> (z/of-string \"(ns example.core)\")
        (parse-ns-form))
    => '{:type :ns-form
@@ -28,7 +29,7 @@
 
 (defn code-form
   "converts a form zipper into a code string
-   
+
    (-> (z/of-string \"(fact (+ 1 1) \\n => 2)\")
        (code-form 'fact))
    => \"(+ 1 1) \\n  => 2\""
@@ -40,7 +41,7 @@
 
 (defn parse-fact-form
   "convert a fact zipper into an element
- 
+
    (-> (z/of-string \"(fact (+ 1 1) \\n => 2)\")
        (parse-fact-form))
    => {:type :block :indentation 2 :code \"(+ 1 1) \\n => 2\"}"
@@ -55,7 +56,7 @@
 
 (defn parse-comment-form
   "convert a comment zipper into an element
- 
+
    (-> (z/of-string \"(comment (+ 1 1) \\n => 2)\")
        (parse-comment-form))
    => {:type :block :indentation 2 :code \"(+ 1 1) \\n => 2\"}"
@@ -64,6 +65,27 @@
   {:type :block
    :indentation (+ *indentation* *spacing*)
    :code (code-form zloc "comment")})
+
+(defn is-code-form
+  [zloc]
+  (let [zloc* (-> zloc source/down source/right)]
+    (cond (query/match zloc* '(= _ _))
+          (let [first  (-> zloc* source/down source/right)
+                second (-> first source/right)]
+            (str (source/->string first)
+                 "\n=> "
+                 (source/->string second)))
+
+          :else
+          (code-form zloc "is"))))
+
+(defn parse-is-form [zloc]
+  {:type :block
+   :indentation (+ *indentation* *spacing*)
+   :code (is-code-form zloc)})
+
+(defn parse-deftest-form [zloc]
+  {:type :deftest})
 
 (defn parse-paragraph
   "converts a string zipper into an element
@@ -80,7 +102,7 @@
    (-> (z/of-string \"[[:chapter {:title \\\"hello world\\\"}]]\")
        (parse-directive))
    => {:type :chapter :title \"hello world\"}
- 
+
    (binding [*namespace* 'example.core]
      (-> (z/of-string \"[[:ns {:title \\\"hello world\\\"}]]\")
          (parse-directive)))
@@ -157,6 +179,12 @@
         (checks/ns? zloc)
         (parse-ns-form zloc)
 
+        (checks/is? zloc)
+        ((wrap-meta parse-is-form) zloc)
+
+        (checks/deftest? zloc)
+        ((wrap-meta parse-deftest-form) zloc)
+
         (checks/fact? zloc)
         ((wrap-meta parse-fact-form) zloc)
 
@@ -192,11 +220,19 @@
 
         :else (conj output current)))
 
+
+(declare parse-loop)
+
+(defn parse-inner [zloc f output current opts]
+  (let [sub (binding [*indentation* (+ *indentation* *spacing*)]
+              (parse-loop (f zloc) opts))]
+    (apply conj (merge-current output current) sub)))
+
 (defn parse-loop
   "the main loop for the parser
-   (-> (z/of-string \"(ns example.core) 
-                     [[:chapter {:title \\\"hello\\\"}]] 
-                     (+ 1 1) 
+   (-> (z/of-string \"(ns example.core)
+                     [[:chapter {:title \\\"hello\\\"}]]
+                     (+ 1 1)
                      (+ 2 2)\")
        (parse-loop {}))
    => [{:type :ns-form, :indentation 0, :ns 'example.core, :code \"(ns example.core)\"}
@@ -230,12 +266,14 @@
                  (case (:type element)
                    :ns-form    (binding [*namespace* (:ns element)]
                                  (parse-loop (source/right* zloc) opts element (merge-current output current)))
-                   :attribute  (recur (source/right* zloc) opts element (merge-current output current))
-                   :file       (recur (source/right* zloc) opts nil (apply conj output (parse-file (:src element) opts)))
+                   :attribute  (recur (source/right* zloc) opts element
+                                      (merge-current output current))
+                   :file       (recur (source/right* zloc) opts nil
+                                      (apply conj output (parse-file (:src element) opts)))
                    :facts      (recur (source/right* zloc) opts nil
-                                      (let [sub (binding [*indentation* (+ *indentation* *spacing*)]
-                                                  (parse-loop (-> zloc source/down source/right) opts))]
-                                        (apply conj (merge-current output current) sub)))
+                                      (parse-inner zloc #(-> % source/down source/right) output current opts))
+                   :deftest    (recur (source/right* zloc) opts nil
+                                      (parse-inner zloc #(-> % source/down source/right source/right) output current opts))
                    (recur (source/right* zloc) opts element (merge-current output current))))))))
 
 (defn parse-file

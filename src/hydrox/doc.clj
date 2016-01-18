@@ -75,7 +75,7 @@
   "helper function that is called by both render-single and render-all"
   {:added "0.1"}
   [name entry folio]
-  (println "Rendering" name)
+  (println "Rendering" name "....")
   (try
     (let [project        (:project folio)
           opts           (:documentation project)
@@ -89,9 +89,12 @@
                               (select-keys entry))
           includes       (prepare-includes name includes folio)
           html           (render/replace-template template includes opts project)]
-      (spit output-path html))
-      (catch Throwable t
-        (println "Unable to render" name))))
+      (spit output-path html)
+      (println "SUCCESS"))
+    (catch Throwable t
+      (println "ERROR")
+      (.printStackTrace t)
+      (println "Unable to render" name))))
 
 (defn copy-files
   "copies all files from the template directory into the output directory"
@@ -118,5 +121,6 @@
   [folio]
   (let [opts (-> folio :project :documentation)]
     (copy-files folio)
+    (println "DOCS:" (keys (:files opts)))
     (doseq [[name entry] (:files opts)]
       (render-entry name entry folio))))

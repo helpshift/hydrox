@@ -18,7 +18,7 @@
 
 (defn directive?
   "checks if the element is a directive.
- 
+
    (-> \"[[:chapter {:title \\\"A Story\\\"}]]\"
        z/of-string
        directive?)
@@ -31,7 +31,7 @@
 
 (defn attribute?
   "checks if the element is an attribute.
- 
+
    (-> \"[[{:title \\\"A Story\\\"}]]\"
        z/of-string
        attribute?)
@@ -42,8 +42,8 @@
 
 (defn code-directive?
   "checks if the element is a code directive
- 
-   (-> \"[[:code {:type :javascript} 
+
+   (-> \"[[:code {:type :javascript}
           \\\"1 + 1 == 2\\\"]]\"
        z/of-string
        code-directive?)
@@ -54,7 +54,7 @@
 
 (defn ns?
   "checks if the element is a ns form
- 
+
    (-> \"(ns ...)\"
        z/of-string
        ns?)
@@ -65,7 +65,7 @@
 
 (defn fact?
   "checks if the element is a fact form
- 
+
    (-> \"(fact ...)\"
        z/of-string
        fact?)
@@ -76,7 +76,7 @@
 
 (defn facts?
   "checks if the element is a facts form
- 
+
    (-> \"(facts ...)\"
        z/of-string
        facts?)
@@ -90,6 +90,14 @@
   {:added "0.1"}
   [zloc]
   ((wrap-meta query/match) zloc {:form 'comment}))
+
+(defn deftest?
+  [zloc]
+  ((wrap-meta query/match) zloc {:form 'deftest}))
+
+(defn is?
+  [zloc]
+  ((wrap-meta query/match) zloc {:form 'is}))
 
 (defn paragraph?
   "checks if the element is a paragraph (string)"
