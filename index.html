@@ -79,7 +79,7 @@
       <section class="chapter" id="introduction"><h2 class="chapter">1  &nbsp;&nbsp; Introduction</h2><section class="section" id="overview"><h3 class="section">1.1  &nbsp;&nbsp; Overview</h3><div class="paragraph"><p><a href='https://www.github.com/helpshift/hydrox'>hydrox</a> assists in the transmission of knowledge around a clojure project, providing in-repl management of documentation, docstrings and metadata through the reuse/repurposing of test code. Facillitating the creation of 'documentation that we can run', the tool allows for a design-orientated workflow for the programming process, blurring the boundaries between design, development, testing and documentation.</p></div><div class="figure"><a name="overview-0"></a><div class="img"><img src="https://raw.githubusercontent.com/helpshift/hydrox/master/template/assets/img/hydrox-overview.png" width="100%" /></div><h4><i>fig.1  &nbsp;-&nbsp; Overview</i></h4></div></section><section class="section" id="installation"><h3 class="section">1.2  &nbsp;&nbsp; Installation</h3><section class="subsection" id="standard"><h4 class="subsection">1.2.1  &nbsp;&nbsp; Standard</h4><div class="paragraph"><p>In your project.clj, add hydrox to the <code>&#91;:profiles :dev :dependencies&#93;</code> entry:</p><pre><code class="clojure">&#40;defproject ...
     ...
     :profiles {:dev {:dependencies &#91;...
-                                    &#91;helpshift/hydrox &quot;0.1.7&quot;&#93;
+                                    &#91;helpshift/hydrox &quot;0.1.15&quot;&#93;
                                     ...&#93;}}
     ...&#41;
 </code></pre></div><div class="paragraph"><p>All functionality is the <code>hydrox.core</code> namespace:</p></div><div class="code"><div hljs="hljs" language="clojure" no-escape="no-escape">(use 'hydrox.core)
@@ -96,7 +96,7 @@
 (surface) ;; stops the tool</div></div></section><section class="subsection" id="vinyasa"><h4 class="subsection">1.2.2  &nbsp;&nbsp; Vinyasa</h4><div class="paragraph"><p>A better experience can be obtained by using <a href='https://github.com/zcaudate/vinyasa'>vinyasa</a> and editing your <code>&#126;/.lein/profiles.clj</code> to inject all <code>hydrox</code> vars into the <code>.</code> namespace:</p><pre><code class="clojure">{:user
    {:plugins &#91;...&#93;
     :dependencies &#91;&#91;im.chit/vinyasa.inject &quot;0.3.4&quot;&#93;
-                   &#91;helpshift/hydrox &quot;0.1.7&quot;&#93;&#93;
+                   &#91;helpshift/hydrox &quot;0.1.15&quot;&#93;&#93;
     :injections
     &#91;&#40;require '&#91;vinyasa.inject :as inject&#93;&#41;
      &#40;inject/in &#91;hydrox.core dive surface generate-docs
@@ -259,6 +259,7 @@ Here is a tag reference to Chapter Heading - {{ch-heading}}
   ([] (dive &quot;project.clj&quot;))
   ([path] (dive path {}))
   ([path opts]
+   (patch/patch-read-keyword)
    (-&gt;&gt; (io/file path)
         (util/read-project)
         (merge opts)
