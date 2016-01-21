@@ -13,13 +13,16 @@ In your `project.clj`, add hydrox to the `[:profiles :dev :dependencies]` entry:
 ```clojure
 (defproject ...
   ...
+  :plugins ["lein-hydrox" "0.1.15"]
   :profiles {:dev {:dependencies [...
-                                  [helpshift/hydrox "0.1.2"]
+                                  [helpshift/hydrox "0.1.15"]
                                   ...]}}
   ...)
 ```
 
-## Usage
+## 
+
+## Overview
 
 [hydrox](https://www.github.com/helpshift/hydrox) assists in the transmission of knowledge around a clojure project, providing in-repl management of documentation, docstrings and metadata through the reuse/repurposing of test code. The tool allows for a design-orientated workflow for the programming process, blurring the boundaries between design, development, testing and documentation.
 
