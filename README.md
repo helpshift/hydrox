@@ -4,7 +4,7 @@
 
 dive deeper into your code
 
-![hydrox logo](https://raw.githubusercontent.com/helpshift/hydrox/master/template/assets/img/big.png)
+[![hydrox logo](https://raw.githubusercontent.com/helpshift/hydrox/master/template/assets/img/big.png)](http://helpshift.github.io/hydrox)
 
 ## Installation
 
@@ -20,9 +20,26 @@ In your `project.clj`, add hydrox to the `[:profiles :dev :dependencies]` entry:
   ...)
 ```
 
-## 
+## Leiningen
 
-## Overview
+To initialise a project:
+
+```shell
+lein hydrox init
+```
+
+To generate documentation (watches project for changes and updates documentation accordingly):
+
+```shell
+lein hydrox
+```
+
+## Tutorials
+
+- [0 - Introduction](https://youtu.be/3MIaucjfJcE)
+- [1 - Getting Started](https://youtu.be/p93LmHOzy6Q)
+
+## Overview 
 
 [hydrox](https://www.github.com/helpshift/hydrox) assists in the transmission of knowledge around a clojure project, providing in-repl management of documentation, docstrings and metadata through the reuse/repurposing of test code. The tool allows for a design-orientated workflow for the programming process, blurring the boundaries between design, development, testing and documentation.
 
