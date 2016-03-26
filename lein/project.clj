@@ -1,7 +1,7 @@
-(defproject lein-hydrox "0.1.15"
+(defproject lein-hydrox "0.1.16"
   :description "leiningen plugin for hydrox"
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[helpshift/hydrox "0.1.15"]]
+  :dependencies [[helpshift/hydrox "0.1.16"]]
   :eval-in-leiningen true)

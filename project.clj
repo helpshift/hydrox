@@ -1,21 +1,21 @@
-(defproject helpshift/hydrox "0.1.15"
+(defproject helpshift/hydrox "0.1.16"
   :description "dive deeper into your code"
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [im.chit/jai  "0.2.9"]
-                 [im.chit/hara.data      "2.2.15"]
-                 [im.chit/hara.io.watch  "2.2.15"]
-                 [im.chit/hara.common.checks  "2.2.15"]
-                 [im.chit/hara.common.watch  "2.2.15"]
-                 [im.chit/hara.component "2.2.15"]
-                 [im.chit/hara.concurrent.pipe "2.2.15"]
-                 [im.chit/hara.event     "2.2.15"]
-                 [im.chit/hara.string    "2.2.15"]
+                 [im.chit/jai  "0.2.10"]
+                 [im.chit/hara.data      "2.2.17"]
+                 [im.chit/hara.io.watch  "2.2.17"]
+                 [im.chit/hara.common.checks  "2.2.17"]
+                 [im.chit/hara.common.watch  "2.2.17"]
+                 [im.chit/hara.component "2.2.17"]
+                 [im.chit/hara.concurrent.pipe "2.2.17"]
+                 [im.chit/hara.event     "2.2.17"]
+                 [im.chit/hara.string    "2.2.17"]
                  [hiccup "1.0.5"]
-                 [markdown-clj "0.9.66"]
-                 [stencil "0.3.5"]
+                 [markdown-clj "0.9.68"]
+                 [stencil "0.5.0"]
                  [me.raynes/fs "1.4.6"]]
   :documentation {:site   "hydrox"
                   :output "docs"
