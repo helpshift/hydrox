@@ -3,7 +3,7 @@
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.10.0"]
                  [im.chit/jai  "0.2.10"]
                  [im.chit/hara.data      "2.2.17"]
                  [im.chit/hara.io.watch  "2.2.17"]
