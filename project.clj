@@ -46,5 +46,6 @@
                              [lein-ancient "0.6.7"]
                              [lein-hydrox "0.1.14"]]}}
   :repositories [["clojar" {:url "https://clojars.org/repo"
+                            :sign-releases false
                             :username [:gpg :env/clojar_username]
                             :password [:gpg :env/clojar_password]}]])
