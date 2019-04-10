@@ -38,10 +38,10 @@
                   :link {:auto-tag    true
                          :auto-number  true}}
 
-  :profiles {:dev {:dependencies [[midje "1.7.0"]
+  :profiles {:dev {:dependencies [[midje "1.9.7"]
                                   [compojure "1.4.0"]
                                   [ring "1.4.0"]
                                   [clj-http "1.1.2"]]
-                   :plugins [[lein-midje "3.1.3"]
+                   :plugins [[lein-midje "3.2.1"]
                              [lein-ancient "0.6.7"]
                              [lein-hydrox "0.1.14"]]}})
