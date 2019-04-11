@@ -1,4 +1,4 @@
-(defproject helpshift/hydrox "0.1.16"
+(defproject parkside-securities/hydrox "0.10.0-SNAPSHOT"
   :description "dive deeper into your code"
   :url "https://github.com/helpshift/hydrox"
   :license {:name "Eclipse Public License"
@@ -44,4 +44,8 @@
                                   [clj-http "1.1.2"]]
                    :plugins [[lein-midje "3.2.1"]
                              [lein-ancient "0.6.7"]
-                             [lein-hydrox "0.1.14"]]}})
+                             [lein-hydrox "0.1.14"]]}}
+  :repositories [["clojar" {:url "https://clojars.org/repo"
+                            :sign-releases false
+                            :username [:gpg :env/clojar_username]
+                            :password [:gpg :env/clojar_password]}]])
