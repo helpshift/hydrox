@@ -2,7 +2,8 @@
   (:require [clojure.tools.reader.edn :as edn]
             [clojure.tools.reader.impl.commons :as common]
             [clojure.tools.reader.impl.utils :as utils]
-            [clojure.tools.reader.reader-types :as reader]))
+            [clojure.tools.reader.reader-types :as reader]
+            [clojure.tools.reader.impl.errors :as read-err]))
 
 (defn read-keyword
   [reader initch opts]
@@ -10,7 +11,7 @@
     (if-not (utils/whitespace? ch)
       (let [token (#'edn/read-token reader ch)]
         (keyword token))
-      (reader/reader-error reader "Invalid token: :"))))
+      (read-err/reader-error reader "Invalid token: :"))))
 
 (defn patch-read-keyword []
   (alter-var-root #'clojure.tools.reader.edn/read-keyword
