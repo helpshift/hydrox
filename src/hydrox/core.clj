@@ -83,12 +83,12 @@
 (defn dive
   "starts a dive"
   {:added "0.1"}
-  ([] (dive "project.clj"))
+  ([] (dive "deps.edn"))
   ([path] (dive path {}))
   ([path opts]
    (patch/patch-read-keyword)
    (->> (io/file path)
-        (util/read-project)
+        (util/deps-read-project)
         (merge opts)
         (regulator/regulator)
         (component/start))))

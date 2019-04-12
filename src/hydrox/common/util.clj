@@ -46,3 +46,35 @@
      (-> proj
          (update-in [:source-paths] (fnil identity ["src"]))
          (update-in [:test-paths] (fnil identity ["test"]))))))
+
+(defn deps-read-project
+  "like `read-project` but for deps.edn'
+
+   (keys (deps-read-project (io/file \"example/deps.edn\")))
+   => (just [:description :license :name :source-paths :test-paths
+             :documentation :root :url :version :dependencies] :in-any-order)"
+  ([] (read-project (io/file "deps.edn")))
+  ([file]
+   (let [path (.getCanonicalPath file)
+         root  (subs path 0 (- (count path) 9))
+         url (str "github.com/parkside-securities/")
+         project-name (last (clojure.string/split root))
+         proj-map (read-string (slurp file))
+         dependencies (merge (:deps proj-map)
+                             (apply hash-map (remove nil? (map :extra-deps (vals (:aliases proj-map))))))
+         source-paths (update-in proj-map [:paths]
+                                 (fnil identity ["src"]))
+         other-paths (vec
+                      (flatten
+                       (remove nil? (map :extra-paths (vals (:aliases proj-map))))))
+         test-paths (or (seq other-paths) ["test"])]
+     {:name project-name
+      :source-paths source-paths
+      :test-paths test-paths
+      :root root
+      :description ""
+      :license ""
+      :documentation ""
+      :url url
+      :version ""
+      :dependencies dependencies})))
